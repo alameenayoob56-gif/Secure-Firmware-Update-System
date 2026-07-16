@@ -6,7 +6,7 @@ import os
 
 router = APIRouter()
 
-# Uploads folder तयार करा (नसल्यास)
+# Create uploads folder if it doesn't exist
 os.makedirs("uploads", exist_ok=True)
 
 
@@ -16,10 +16,25 @@ async def upload_firmware(
     version: str = Form(...),
     firmware_name: str = Form(...)
 ):
-    # File save path
-    file_path = f"uploads/{firmware.filename}"
+    # Validate input
+    if firmware.filename == "":
+        return {
+            "error": "Empty file"
+        }
+
+    if version.strip() == "":
+        return {
+            "error": "Version required"
+        }
+
+    if firmware_name.strip() == "":
+        return {
+            "error": "Firmware name required"
+        }
 
     # Save uploaded file
+    file_path = f"uploads/{firmware.filename}"
+
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(firmware.file, buffer)
 
@@ -27,7 +42,7 @@ async def upload_firmware(
     db = SessionLocal()
 
     try:
-        # Create firmware record
+        # Save firmware metadata
         new_firmware = Firmware(
             firmware_name=firmware_name,
             version=version,
