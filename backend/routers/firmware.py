@@ -3,6 +3,7 @@ from database.db import SessionLocal
 from models.models import Firmware
 import shutil
 import os
+from utils.hash_utils import generate_sha256
 
 router = APIRouter()
 
@@ -37,6 +38,8 @@ async def upload_firmware(
 
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(firmware.file, buffer)
+
+        hash_value = generate_sha256(file_path)    
 
     # Database session
     db = SessionLocal()
