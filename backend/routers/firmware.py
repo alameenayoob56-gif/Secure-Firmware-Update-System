@@ -1,12 +1,12 @@
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from database.db import SessionLocal
 from models.models import Firmware
 import shutil
 import os
+from utils.hash_utils import generate_sha256
 
 router = APIRouter()
 
-# Create uploads folder if it doesn't exist
 os.makedirs("uploads", exist_ok=True)
 
 
@@ -18,19 +18,13 @@ async def upload_firmware(
 ):
     # Validate input
     if firmware.filename == "":
-        return {
-            "error": "Empty file"
-        }
+        return {"error": "Empty file"}
 
     if version.strip() == "":
-        return {
-            "error": "Version required"
-        }
+        return {"error": "Version required"}
 
     if firmware_name.strip() == "":
-        return {
-            "error": "Firmware name required"
-        }
+        return {"error": "Firmware name required"}
 
     # Save uploaded file
     file_path = f"uploads/{firmware.filename}"
@@ -38,16 +32,17 @@ async def upload_firmware(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(firmware.file, buffer)
 
-    # Database session
+    # Generate SHA-256 hash
+    hash_value = generate_sha256(file_path)
+
     db = SessionLocal()
 
     try:
-        # Save firmware metadata
         new_firmware = Firmware(
             firmware_name=firmware_name,
             version=version,
-            hash="samplehash",
-            signature="samplesignature"
+            hash=hash_value,
+            signature=""
         )
 
         db.add(new_firmware)
@@ -59,7 +54,41 @@ async def upload_firmware(
             "firmware_id": new_firmware.id,
             "firmware_name": new_firmware.firmware_name,
             "version": new_firmware.version,
-            "filename": firmware.filename
+            "filename": firmware.filename,
+            "hash": hash_value
+        }
+
+    finally:
+        db.close()
+
+
+@router.post("/firmware/verify")
+async def verify_firmware(file: UploadFile = File(...)):
+    file_path = f"uploads/{file.filename}"
+
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    generated_hash = generate_sha256(file_path)
+
+    db = SessionLocal()
+
+    try:
+        firmware = db.query(Firmware).first()
+
+        if firmware is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Firmware not found"
+            )
+
+        if generated_hash == firmware.hash:
+            return {
+                "status": "Valid"
+            }
+
+        return {
+            "status": "Tampered"
         }
 
     finally:
