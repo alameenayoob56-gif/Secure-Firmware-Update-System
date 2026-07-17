@@ -7,9 +7,7 @@ from utils.hash_utils import generate_sha256
 
 router = APIRouter()
 
-# Create uploads folder if it doesn't exist
 os.makedirs("uploads", exist_ok=True)
-
 
 @router.post("/firmware/upload")
 async def upload_firmware(
@@ -39,7 +37,8 @@ async def upload_firmware(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(firmware.file, buffer)
 
-        hash_value = generate_sha256(file_path)    
+    # Generate SHA-256 hash
+    hash_value = generate_sha256(file_path)
 
     # Database session
     db = SessionLocal()
@@ -49,8 +48,8 @@ async def upload_firmware(
         new_firmware = Firmware(
             firmware_name=firmware_name,
             version=version,
-            hash="samplehash",
-            signature="samplesignature"
+            hash=hash_value,
+            signature=""
         )
 
         db.add(new_firmware)
@@ -62,7 +61,8 @@ async def upload_firmware(
             "firmware_id": new_firmware.id,
             "firmware_name": new_firmware.firmware_name,
             "version": new_firmware.version,
-            "filename": firmware.filename
+            "filename": firmware.filename,
+            "hash": hash_value
         }
 
     finally:
