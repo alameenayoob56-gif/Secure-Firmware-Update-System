@@ -2,3 +2,5 @@ venv/
 __pycache__/
 *.pyc
 firmware.db
+
+backend/keys/private_key.pem
