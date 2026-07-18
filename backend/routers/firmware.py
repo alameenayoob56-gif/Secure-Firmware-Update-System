@@ -4,6 +4,7 @@ from models.models import Firmware
 import shutil
 import os
 from utils.hash_utils import generate_sha256
+from utils.rsa_utils import sign_data
 
 router = APIRouter()
 
@@ -35,6 +36,15 @@ async def upload_firmware(
     # Generate SHA-256 hash
     hash_value = generate_sha256(file_path)
 
+    # Read firmware data
+    with open(file_path, "rb") as file:
+        firmware_data = file.read()
+
+    # Generate Digital Signature
+    signature = sign_data(firmware_data)
+    signature_hex = signature.hex()
+
+    # Database session
     db = SessionLocal()
 
     try:
@@ -42,7 +52,7 @@ async def upload_firmware(
             firmware_name=firmware_name,
             version=version,
             hash=hash_value,
-            signature=""
+            signature=signature_hex
         )
 
         db.add(new_firmware)
@@ -55,7 +65,8 @@ async def upload_firmware(
             "firmware_name": new_firmware.firmware_name,
             "version": new_firmware.version,
             "filename": firmware.filename,
-            "hash": hash_value
+            "hash": hash_value,
+            "signature": signature_hex
         }
 
     finally:
