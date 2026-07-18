@@ -5,6 +5,7 @@ import shutil
 import os
 from utils.hash_utils import generate_sha256
 from utils.rsa_utils import sign_data
+from utils.rsa_utils import verify_signature
 
 router = APIRouter()
 
@@ -101,6 +102,67 @@ async def verify_firmware(file: UploadFile = File(...)):
         return {
             "status": "Tampered"
         }
+
+    finally:
+        db.close()
+
+@router.post("/firmware/verify-signature")
+async def verify_signature_api(file: UploadFile = File(...)):
+    file_path = f"uploads/{file.filename}"
+
+    # Save uploaded file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    db = SessionLocal()
+
+    try:
+        # Get latest firmware from database
+        firmware = (
+            db.query(Firmware)
+            .order_by(Firmware.id.desc())
+            .first()
+        )
+
+        if firmware is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Firmware not found"
+            )
+
+        # Read uploaded firmware
+        with open(file_path, "rb") as f:
+            firmware_data = f.read()
+
+        # Debug prints
+        print("Firmware ID:", firmware.id)
+        print("Firmware Name:", firmware.firmware_name)
+        print("Stored Signature:", firmware.signature)
+
+        # Convert hex string to bytes
+        stored_signature = bytes.fromhex(firmware.signature)
+
+        # Verify signature
+        result = verify_signature(
+            firmware_data,
+            stored_signature
+        )
+
+        if result:
+            return {
+                "status": "Signature Verified"
+            }
+
+        return {
+            "status": "Invalid Signature"
+        }
+
+    except Exception as e:
+        print("ERROR:", e)
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
     finally:
         db.close()
