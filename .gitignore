@@ -4,3 +4,6 @@ __pycache__/
 firmware.db
 
 backend/keys/private_key.pem
+
+keys/aes.key
+backend/keys/aes.key
