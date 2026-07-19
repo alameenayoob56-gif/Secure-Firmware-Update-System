@@ -3,9 +3,13 @@ from database.db import SessionLocal
 from models.models import Firmware
 import shutil
 import os
+
 from utils.hash_utils import generate_sha256
 from utils.rsa_utils import sign_data
 from utils.rsa_utils import verify_signature
+
+from utils.aes_utils import encrypt_data
+from utils.aes_utils import decrypt_data
 
 router = APIRouter()
 
@@ -45,6 +49,13 @@ async def upload_firmware(
     signature = sign_data(firmware_data)
     signature_hex = signature.hex()
 
+    # Encrypt firmware
+    encrypted_data = encrypt_data(firmware_data)
+
+    # Store encrypted firmware
+    with open(file_path, "wb") as file:
+     file.write(encrypted_data)
+
     # Database session
     db = SessionLocal()
 
@@ -61,7 +72,7 @@ async def upload_firmware(
         db.refresh(new_firmware)
 
         return {
-            "message": "Firmware uploaded successfully",
+            "message": "Firmware uploaded and encrypted successfully",
             "firmware_id": new_firmware.id,
             "firmware_name": new_firmware.firmware_name,
             "version": new_firmware.version,
@@ -166,3 +177,34 @@ async def verify_signature_api(file: UploadFile = File(...)):
 
     finally:
         db.close()
+
+        
+@router.post("/firmware/decrypt")
+async def decrypt_firmware(filename: str = Form(...)):
+
+    # Path of encrypted firmware already stored on server
+    file_path = f"uploads/{filename}"
+
+    if not os.path.exists(file_path):
+        raise HTTPException(
+            status_code=404,
+            detail="Encrypted firmware not found"
+        )
+
+    # Read encrypted file
+    with open(file_path, "rb") as f:
+        encrypted_data = f.read()
+
+    # Decrypt
+    decrypted_data = decrypt_data(encrypted_data)
+
+    # Save decrypted firmware
+    output_path = f"uploads/decrypted_{filename}"
+
+    with open(output_path, "wb") as f:
+        f.write(decrypted_data)
+
+    return {
+        "message": "Firmware decrypted successfully",
+        "output_file": output_path
+    }
