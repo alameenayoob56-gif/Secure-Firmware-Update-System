@@ -1,0 +1,155 @@
+.firmware-history-page {
+  max-width: 1200px;
+}
+
+.history-upload-button {
+  padding: 10px 16px;
+  border: 1px solid rgb(126, 242, 76);
+  border-radius: 6px;
+  color: #071006;
+  background-color: rgb(126, 242, 76);
+  box-shadow: 0 0 15px rgba(126, 242, 76, 0.25);
+  cursor: pointer;
+}
+
+.history-upload-button:hover {
+  background-color: #a0ff70;
+}
+
+.latest-release-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(126, 242, 76, 0.4);
+  border-radius: 10px;
+  background:
+    linear-gradient(90deg, rgba(126, 242, 76, 0.1), transparent),
+    #101610;
+}
+
+.latest-label {
+  color: #8d9b89;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.latest-release-card h2 {
+  margin: 8px 0;
+  color: rgb(126, 242, 76);
+  font-size: 30px;
+}
+
+.latest-release-card p {
+  margin: 0;
+  color: #b1c0ad;
+}
+
+.signature-verified {
+  padding: 10px 14px;
+  border: 1px solid rgba(126, 242, 76, 0.4);
+  border-radius: 20px;
+  color: rgb(126, 242, 76);
+  background-color: rgba(126, 242, 76, 0.1);
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.firmware-history-panel {
+  padding: 24px;
+  border: 1px solid #253126;
+  border-radius: 10px;
+  background-color: #101610;
+}
+
+.history-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.history-panel-heading h2 {
+  margin: 0;
+  color: #f3fff0;
+  font-size: 20px;
+}
+
+.history-panel-heading span {
+  color: #8d9b89;
+  font-size: 13px;
+}
+
+.firmware-history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.firmware-history-table th,
+.firmware-history-table td {
+  padding: 14px;
+  border-bottom: 1px solid #253126;
+  text-align: left;
+}
+
+.firmware-history-table th {
+  color: #8d9b89;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.firmware-history-table td {
+  color: #dce8d8;
+  font-size: 14px;
+}
+
+.version-cell {
+  color: rgb(126, 242, 76) !important;
+  font-weight: bold;
+}
+
+.firmware-history-table code {
+  color: #b1c0ad;
+  font-size: 12px;
+}
+
+.firmware-status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.firmware-status.published {
+  border: 1px solid rgba(126, 242, 76, 0.35);
+  color: rgb(126, 242, 76);
+  background-color: rgba(126, 242, 76, 0.1);
+}
+
+.firmware-status.retired {
+  border: 1px solid rgba(255, 178, 75, 0.35);
+  color: #ffb24b;
+  background-color: rgba(255, 178, 75, 0.1);
+}
+
+.manifest-button {
+  border: none;
+  color: rgb(126, 242, 76);
+  background: transparent;
+  cursor: pointer;
+}
+
+.manifest-button:hover {
+  text-shadow: 0 0 10px rgba(126, 242, 76, 0.7);
+}
+
+@media (max-width: 700px) {
+  .latest-release-card,
+  .history-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
