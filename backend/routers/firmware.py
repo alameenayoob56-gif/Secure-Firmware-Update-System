@@ -180,23 +180,26 @@ async def verify_signature_api(file: UploadFile = File(...)):
 
         
 @router.post("/firmware/decrypt")
-async def decrypt_firmware(file: UploadFile = File(...)):
+async def decrypt_firmware(filename: str = Form(...)):
 
-    file_path = f"uploads/{file.filename}"
+    # Path of encrypted firmware already stored on server
+    file_path = f"uploads/{filename}"
 
-    # Save uploaded encrypted file
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    if not os.path.exists(file_path):
+        raise HTTPException(
+            status_code=404,
+            detail="Encrypted firmware not found"
+        )
 
-    # Read encrypted data
+    # Read encrypted file
     with open(file_path, "rb") as f:
         encrypted_data = f.read()
 
     # Decrypt
     decrypted_data = decrypt_data(encrypted_data)
 
-    # Save decrypted file
-    output_path = f"uploads/decrypted_{file.filename}"
+    # Save decrypted firmware
+    output_path = f"uploads/decrypted_{filename}"
 
     with open(output_path, "wb") as f:
         f.write(decrypted_data)
