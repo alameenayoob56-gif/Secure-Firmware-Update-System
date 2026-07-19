@@ -52,3 +52,35 @@ The Secure Firmware Update System uses RSA Digital Signatures to verify firmware
 - Prevents unauthorized firmware modification
 - Detects tampered firmware
 - Provides secure firmware validation
+
+## AES Firmware Encryption
+
+### Workflow
+
+Upload Firmware
+
+↓
+
+Generate SHA-256
+
+↓
+
+Generate RSA Signature
+
+↓
+
+Encrypt using AES-256
+
+↓
+
+Store Encrypted Firmware
+
+↓
+
+Decrypt when Required
+
+### Benefits
+
+- Prevents firmware theft
+- Protects firmware confidentiality
+- Secure deployment
