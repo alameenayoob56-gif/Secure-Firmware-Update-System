@@ -1,0 +1,98 @@
+.upload-page {
+  max-width: 900px;
+}
+
+.upload-panel {
+  padding: 28px;
+  border: 1px solid #253126;
+  border-radius: 10px;
+  background-color: #101610;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+}
+
+.upload-panel h2 {
+  margin: 0 0 8px;
+  color: #f3fff0;
+}
+
+.panel-description {
+  margin: 0 0 28px;
+  color: #94a391;
+}
+
+.firmware-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.firmware-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #dce8d8;
+  font-size: 14px;
+}
+
+.firmware-form input,
+.firmware-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #334334;
+  border-radius: 6px;
+  outline: none;
+  color: #f3fff0;
+  background-color: #080c08;
+}
+
+.firmware-form input:focus,
+.firmware-form textarea:focus {
+  border-color: rgb(126, 242, 76);
+  box-shadow: 0 0 10px rgba(126, 242, 76, 0.16);
+}
+
+.field-help {
+  color: #8d9b89;
+  font-size: 12px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.security-note {
+  padding: 14px;
+  border: 1px solid rgba(126, 242, 76, 0.3);
+  border-radius: 6px;
+  color: #b8dcb0;
+  background-color: rgba(126, 242, 76, 0.07);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.security-note strong {
+  color: rgb(126, 242, 76);
+}
+
+.upload-button {
+  align-self: flex-start;
+  padding: 12px 18px;
+  border: 1px solid rgb(126, 242, 76);
+  border-radius: 6px;
+  color: #071006;
+  background-color: rgb(126, 242, 76);
+  box-shadow: 0 0 15px rgba(126, 242, 76, 0.25);
+  cursor: pointer;
+}
+
+.upload-button:hover {
+  background-color: #a0ff70;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
