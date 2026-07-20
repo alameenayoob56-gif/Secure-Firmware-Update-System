@@ -10,6 +10,7 @@ from utils.rsa_utils import verify_signature
 
 from utils.aes_utils import encrypt_data
 from utils.aes_utils import decrypt_data
+from utils.encryption_utils import encrypt_file
 
 router = APIRouter()
 
@@ -37,6 +38,15 @@ async def upload_firmware(
 
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(firmware.file, buffer)
+
+    # Encrypt uploaded firmware
+
+    encrypted_path = f"encrypted/{firmware.filename}.enc"
+
+    encrypt_file(
+    input_file=file_path,
+    output_file=encrypted_path
+)    
 
     # Generate SHA-256 hash
     hash_value = generate_sha256(file_path)
@@ -77,6 +87,7 @@ async def upload_firmware(
             "firmware_name": new_firmware.firmware_name,
             "version": new_firmware.version,
             "filename": firmware.filename,
+            "encrypted_file": encrypted_path,
             "hash": hash_value,
             "signature": signature_hex
         }
