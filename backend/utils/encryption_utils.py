@@ -1,13 +1,10 @@
 from cryptography.fernet import Fernet
 import os
 
-# Base directory (backend folder)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Keys directory
 KEYS_DIR = os.path.join(BASE_DIR, "keys")
 KEY_FILE = os.path.join(KEYS_DIR, "aes.key")
-
 
 def generate_key():
     """
