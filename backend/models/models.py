@@ -11,6 +11,7 @@ class Firmware(Base):
     version = Column(String, nullable=False)
     hash = Column(String, nullable=False)
     signature = Column(String, nullable=False)
+    encrypted_file = Column(String)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
 
 
