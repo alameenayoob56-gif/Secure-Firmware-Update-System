@@ -121,3 +121,20 @@ The Secure Firmware Update System encrypts firmware files before storing them on
 * Protects firmware during storage
 * Supports integrity verification using SHA-256
 * Supports authenticity verification using RSA Digital Signatures
+
+## JWT Authentication
+
+### Login
+
+POST /login
+
+### Roles
+
+- Admin: upload, download, delete firmware
+- User: download firmware only
+
+### Authorization
+
+Use the JWT token in Swagger Authorize:
+
+Bearer <token>
