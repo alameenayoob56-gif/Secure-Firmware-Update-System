@@ -63,12 +63,13 @@ async def upload_firmware(
 
     try:
         new_firmware = Firmware(
-            firmware_name=firmware_name,
-            version=version,
-            hash=hash_value,
-            signature=signature_hex
-        )
-
+        firmware_name=firmware_name,
+        version=version,
+        hash=hash_value,
+        signature=signature_hex,
+        encrypted_file=encrypted_path
+      )
+        
         db.add(new_firmware)
         db.commit()
         db.refresh(new_firmware)
