@@ -103,3 +103,14 @@ def download_firmware(
         "user": user.get("sub"),
         "role": user.get("role")
     }
+
+@app.delete("/firmware/{firmware_id}")
+def delete_firmware(
+    firmware_id: int,
+    admin=Depends(require_admin)
+):
+
+    return {
+        "message": f"Firmware {firmware_id} deleted by admin",
+        "admin": admin.get("sub")
+    }
