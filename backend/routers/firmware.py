@@ -1,5 +1,6 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
 from database.db import SessionLocal
+from sqlalchemy.orm import Session
 from models.models import Firmware
 import shutil
 import os
@@ -11,6 +12,13 @@ from utils.rsa_utils import verify_signature
 from utils.encryption_utils import encrypt_file, decrypt_file
 
 router = APIRouter()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 os.makedirs("uploads", exist_ok=True)
 
@@ -58,18 +66,32 @@ async def upload_firmware(
     signature_hex = signature.hex()
 
 
-    # Database session
+     # Database session
     db = SessionLocal()
+
+    # Check duplicate firmware version
+    existing_firmware = (
+        db.query(Firmware)
+        .filter(Firmware.version == version)
+        .first()
+    )
+
+    if existing_firmware:
+        db.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Firmware version already exists"
+        )
 
     try:
         new_firmware = Firmware(
-        firmware_name=firmware_name,
-        version=version,
-        hash=hash_value,
-        signature=signature_hex,
-        encrypted_file=encrypted_path
-      )
-        
+            firmware_name=firmware_name,
+            version=version,
+            hash=hash_value,
+            signature=signature_hex,
+            encrypted_file=encrypted_path
+        )
+
         db.add(new_firmware)
         db.commit()
         db.refresh(new_firmware)
@@ -206,4 +228,41 @@ async def decrypt_firmware(filename: str = Form(...)):
     return {
         "message": "Firmware decrypted successfully",
         "decrypted_file": output_file
+    }
+
+@router.get("/firmware/history")
+def firmware_history(db: Session = Depends(get_db)):
+    firmware_list = (
+        db.query(Firmware)
+        .order_by(Firmware.release_date.desc())
+        .all()
+    )
+
+    return [
+        {
+            "firmware_name": fw.firmware_name,
+            "version": fw.version,
+            "release_date": fw.release_date,
+        }
+        for fw in firmware_list
+    ]
+
+@router.get("/firmware/latest")
+def latest_firmware(db: Session = Depends(get_db)):
+    firmware = (
+        db.query(Firmware)
+        .order_by(Firmware.release_date.desc())
+        .first()
+    )
+
+    if not firmware:
+        raise HTTPException(
+            status_code=404,
+            detail="No firmware found"
+        )
+
+    return {
+        "firmware_name": firmware.firmware_name,
+        "version": firmware.version,
+        "release_date": firmware.release_date,
     }
