@@ -138,3 +138,28 @@ POST /login
 Use the JWT token in Swagger Authorize:
 
 Bearer <token>
+
+## Firmware Version Management
+
+This module provides firmware version tracking and update management features.
+
+### Features
+
+- Firmware version tracking
+- Firmware release history
+- Latest firmware retrieval
+- Duplicate firmware version validation
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /firmware/upload | Upload a new firmware |
+| GET | /firmware/history | Retrieve firmware version history |
+| GET | /firmware/latest | Retrieve the latest firmware version |
+
+### Validation
+
+- Prevents duplicate firmware versions
+- Rejects empty firmware version
+- Returns appropriate HTTP error responses
