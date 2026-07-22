@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from datetime import datetime
 from database.db import Base
+from datetime import datetime
+from sqlalchemy import Boolean, DateTime
 
 
 class Firmware(Base):
@@ -13,6 +15,9 @@ class Firmware(Base):
     signature = Column(String, nullable=False)
     encrypted_file = Column(String)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
+    release_notes = Column(String, nullable=True)
+release_date = Column(DateTime, default=datetime.utcnow)
+is_latest = Column(Boolean, default=False)
 
 
 class Device(Base):
