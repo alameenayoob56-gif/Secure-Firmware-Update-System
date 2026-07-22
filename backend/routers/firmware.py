@@ -66,18 +66,32 @@ async def upload_firmware(
     signature_hex = signature.hex()
 
 
-    # Database session
+     # Database session
     db = SessionLocal()
+
+    # Check duplicate firmware version
+    existing_firmware = (
+        db.query(Firmware)
+        .filter(Firmware.version == version)
+        .first()
+    )
+
+    if existing_firmware:
+        db.close()
+        raise HTTPException(
+            status_code=400,
+            detail="Firmware version already exists"
+        )
 
     try:
         new_firmware = Firmware(
-        firmware_name=firmware_name,
-        version=version,
-        hash=hash_value,
-        signature=signature_hex,
-        encrypted_file=encrypted_path
-      )
-        
+            firmware_name=firmware_name,
+            version=version,
+            hash=hash_value,
+            signature=signature_hex,
+            encrypted_file=encrypted_path
+        )
+
         db.add(new_firmware)
         db.commit()
         db.refresh(new_firmware)
