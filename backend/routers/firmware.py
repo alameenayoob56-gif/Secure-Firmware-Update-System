@@ -1,5 +1,6 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
 from database.db import SessionLocal
+from sqlalchemy.orm import Session
 from models.models import Firmware
 import shutil
 import os
@@ -11,6 +12,13 @@ from utils.rsa_utils import verify_signature
 from utils.encryption_utils import encrypt_file, decrypt_file
 
 router = APIRouter()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 os.makedirs("uploads", exist_ok=True)
 
@@ -207,3 +215,20 @@ async def decrypt_firmware(filename: str = Form(...)):
         "message": "Firmware decrypted successfully",
         "decrypted_file": output_file
     }
+
+@router.get("/firmware/history")
+def firmware_history(db: Session = Depends(get_db)):
+    firmware_list = (
+        db.query(Firmware)
+        .order_by(Firmware.release_date.desc())
+        .all()
+    )
+
+    return [
+        {
+            "firmware_name": fw.firmware_name,
+            "version": fw.version,
+            "release_date": fw.release_date,
+        }
+        for fw in firmware_list
+    ]
