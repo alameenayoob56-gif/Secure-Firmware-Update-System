@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.security import HTTPBearer
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
 from database.db import Base, engine
