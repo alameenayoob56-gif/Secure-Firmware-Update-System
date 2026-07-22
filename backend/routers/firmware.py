@@ -232,3 +232,23 @@ def firmware_history(db: Session = Depends(get_db)):
         }
         for fw in firmware_list
     ]
+
+@router.get("/firmware/latest")
+def latest_firmware(db: Session = Depends(get_db)):
+    firmware = (
+        db.query(Firmware)
+        .order_by(Firmware.release_date.desc())
+        .first()
+    )
+
+    if not firmware:
+        raise HTTPException(
+            status_code=404,
+            detail="No firmware found"
+        )
+
+    return {
+        "firmware_name": firmware.firmware_name,
+        "version": firmware.version,
+        "release_date": firmware.release_date,
+    }
