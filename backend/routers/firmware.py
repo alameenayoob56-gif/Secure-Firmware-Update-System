@@ -230,23 +230,6 @@ async def decrypt_firmware(filename: str = Form(...)):
         "decrypted_file": output_file
     }
 
-@router.get("/firmware/history")
-def firmware_history(db: Session = Depends(get_db)):
-    firmware_list = (
-        db.query(Firmware)
-        .order_by(Firmware.release_date.desc())
-        .all()
-    )
-
-    return [
-        {
-            "firmware_name": fw.firmware_name,
-            "version": fw.version,
-            "release_date": fw.release_date,
-        }
-        for fw in firmware_list
-    ]
-
 @router.get("/firmware/latest")
 def latest_firmware(db: Session = Depends(get_db)):
     firmware = (
@@ -308,6 +291,35 @@ async def rollback_firmware(version: str = Form(...)):
             "message": "Firmware rollback successful",
             "active_version": firmware.version
         }
+
+    finally:
+        db.close()
+
+@router.get("/firmware/history")
+async def firmware_history():
+
+    db = SessionLocal()
+
+    try:
+        firmwares = (
+            db.query(Firmware)
+            .order_by(Firmware.uploaded_at.desc())
+            .all()
+        )
+
+        return [
+            {
+                "id": fw.id,
+                "firmware_name": fw.firmware_name,
+                "version": fw.version,
+                "deployment_status": fw.deployment_status,
+                "is_active": fw.is_active,
+                "rollback_from": fw.rollback_from,
+                "uploaded_at": fw.uploaded_at,
+                "release_date": fw.release_date
+            }
+            for fw in firmwares
+        ]
 
     finally:
         db.close()
