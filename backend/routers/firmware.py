@@ -266,3 +266,48 @@ def latest_firmware(db: Session = Depends(get_db)):
         "version": firmware.version,
         "release_date": firmware.release_date,
     }
+
+@router.post("/firmware/rollback")
+async def rollback_firmware(version: str = Form(...)):
+
+    db = SessionLocal()
+
+    try:
+
+        # Find requested firmware version
+        firmware = (
+            db.query(Firmware)
+            .filter(Firmware.version == version)
+            .first()
+        )
+
+        if firmware is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Firmware version not found"
+            )
+
+        # Deactivate current active firmware
+        active_firmware = (
+            db.query(Firmware)
+            .filter(Firmware.is_active == True)
+            .first()
+        )
+
+        if active_firmware:
+            active_firmware.is_active = False
+            active_firmware.deployment_status = "Rolled Back"
+
+        # Activate selected firmware
+        firmware.is_active = True
+        firmware.deployment_status = "Deployed"
+
+        db.commit()
+
+        return {
+            "message": "Firmware rollback successful",
+            "active_version": firmware.version
+        }
+
+    finally:
+        db.close()
