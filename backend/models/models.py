@@ -13,6 +13,9 @@ class Firmware(Base):
     signature = Column(String, nullable=False)
     encrypted_file = Column(String)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
+    is_active = Column(Boolean, default=False)
+    deployment_status = Column(String, default="Pending")
+    rollback_from = Column(String, nullable=True)
 
     release_notes = Column(String, nullable=True)
     release_date = Column(DateTime, default=datetime.utcnow)
