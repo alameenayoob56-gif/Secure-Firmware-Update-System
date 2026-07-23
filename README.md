@@ -163,3 +163,24 @@ This module provides firmware version tracking and update management features.
 - Prevents duplicate firmware versions
 - Rejects empty firmware version
 - Returns appropriate HTTP error responses
+
+## Firmware Version Management
+
+### Features
+
+- Firmware version history
+- Activate latest firmware
+- Rollback to previous firmware
+- Deployment status tracking
+- Release date management
+- Active firmware management
+
+### APIs
+
+- POST /firmware/upload
+- POST /firmware/rollback
+- GET /firmware/history
+
+### Testing
+
+Verified using Swagger UI.
