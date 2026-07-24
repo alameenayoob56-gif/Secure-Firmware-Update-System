@@ -3,6 +3,7 @@ from datetime import datetime
 from database.db import Base
 
 
+
 class Firmware(Base):
     __tablename__ = "firmware"
 
@@ -20,8 +21,7 @@ class Firmware(Base):
     release_notes = Column(String, nullable=True)
     release_date = Column(DateTime, default=datetime.utcnow)
     is_latest = Column(Boolean, default=False)
-
-
+   
 class Device(Base):
     __tablename__ = "devices"
 
@@ -40,3 +40,5 @@ class UpdateHistory(Base):
     device_id = Column(Integer, nullable=False)
     update_status = Column(String, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow)
+
+   

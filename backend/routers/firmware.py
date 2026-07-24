@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from models.models import Firmware
 import shutil
 import os
+from pydantic import BaseModel
 
 from utils.hash_utils import generate_sha256
 from utils.rsa_utils import sign_data
@@ -19,6 +20,9 @@ def get_db():
         yield db
     finally:
         db.close()
+
+class DeployRequest(BaseModel):
+     version: str       
 
 os.makedirs("uploads", exist_ok=True)
 
@@ -323,3 +327,39 @@ async def firmware_history():
 
     finally:
         db.close()
+
+
+@router.post("/firmware/deploy")
+def deploy_firmware(request: DeployRequest, db: Session = Depends(get_db)):
+
+    firmware = (
+        db.query(Firmware)
+        .filter(Firmware.version == request.version)
+        .first()
+    )
+
+    if firmware is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Firmware version not found"
+        )
+
+    # Deactivate all firmware
+    db.query(Firmware).update(
+        {
+            Firmware.is_active: False,
+            Firmware.deployment_status: "Pending"
+        }
+    )
+
+    # Activate selected firmware
+    firmware.is_active = True
+    firmware.deployment_status = "Deployed"
+
+    db.commit()
+    db.refresh(firmware)
+
+    return {
+        "message": "Firmware deployed successfully",
+        "active_version": firmware.version
+    }    
