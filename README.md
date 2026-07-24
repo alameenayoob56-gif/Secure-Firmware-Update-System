@@ -184,3 +184,59 @@ This module provides firmware version tracking and update management features.
 ### Testing
 
 Verified using Swagger UI.
+
+## Firmware Deployment
+
+### Features
+
+- Deploy firmware by version
+- Maintain one active firmware at a time
+- Track deployment status
+- Swagger API available
+
+### Deployment API
+
+**Endpoint**
+
+POST /firmware/deploy
+
+**Example Request**
+
+```json
+{
+  "version": "1.0.0"
+}
+```
+
+**Example Response**
+
+```json
+{
+  "message": "Firmware deployed successfully",
+  "active_version": "1.0.0"
+}
+```
+
+### Deployment Workflow
+
+Receive Version
+
+↓
+
+Find Firmware
+
+↓
+
+Deactivate Current Active Firmware
+
+↓
+
+Activate Selected Firmware
+
+↓
+
+Update Deployment Status
+
+↓
+
+Return Success
