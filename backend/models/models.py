@@ -26,10 +26,20 @@ class Device(Base):
     __tablename__ = "devices"
 
     id = Column(Integer, primary_key=True, index=True)
+
     device_name = Column(String, nullable=False)
+
     serial_number = Column(String, unique=True, nullable=False)
-    current_version = Column(String, nullable=False)
-    status = Column(String, default="ACTIVE")
+
+    model = Column(String, nullable=False)
+
+    firmware_version = Column(String, nullable=False)
+
+    assigned_firmware = Column(String, nullable=True)
+
+    status = Column(String, default="Pending")
+
+    registered_at = Column(DateTime, default=datetime.utcnow)
 
 
 class UpdateHistory(Base):

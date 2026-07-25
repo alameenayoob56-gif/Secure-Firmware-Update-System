@@ -240,3 +240,27 @@ Update Deployment Status
 ↓
 
 Return Success
+
+## Device Management
+
+### Features
+
+- Register IoT devices
+- Assign firmware to devices
+- Track firmware version
+- Monitor device update status
+- Swagger API support
+
+### APIs
+
+- POST /devices/register
+- GET /devices
+- POST /devices/assign-firmware
+- POST /devices/update-status
+
+### Device Status
+
+- Pending
+- Updating
+- Updated
+- Failed

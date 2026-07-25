@@ -6,6 +6,7 @@ from database.db import Base, engine
 from models.models import Firmware, Device
 from routers.firmware import router as firmware_router
 from utils.auth_utils import create_access_token, verify_token
+from routers.device import router as device_router
 
 app = FastAPI(
     title="Secure Firmware Update System"
@@ -16,6 +17,7 @@ security = HTTPBearer()
 Base.metadata.create_all(bind=engine)
 
 app.include_router(firmware_router)
+app.include_router(device_router)
 
 
 @app.get("/")
