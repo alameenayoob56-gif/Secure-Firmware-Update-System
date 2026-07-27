@@ -264,3 +264,39 @@ Return Success
 - Updating
 - Updated
 - Failed
+
+### Device History
+
+- View complete history of registered devices.
+- Track assigned firmware versions.
+- Monitor device status.
+- Retrieve registration history.
+
+## Device Management APIs
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /devices/register | Register a new device |
+| GET | /devices | Get all registered devices |
+| PUT | /devices/update/{id} | Update device details |
+| DELETE | /devices/delete/{id} | Delete device |
+| POST | /devices/assign-firmware | Assign firmware to device |
+| GET | /devices/history | Get complete device history |
+
+### GET /devices/history
+
+Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "device_name": "ESP32",
+    "serial_number": "ESP001",
+    "model": "ESP32-WROOM",
+    "firmware_version": "1.0.0",
+    "assigned_firmware": "1.0.0",
+    "status": "Online",
+    "registered_at": "2026-07-27T10:30:00"
+  }
+]

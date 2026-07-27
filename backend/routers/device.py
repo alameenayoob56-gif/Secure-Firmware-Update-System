@@ -323,3 +323,145 @@ def delete_device(
         "message": "Device deleted successfully",
         "device_id": device_id
     }
+
+@router.get("/devices")
+async def get_devices():
+
+    db = SessionLocal()
+
+    try:
+
+        devices = db.query(Device).all()
+
+        return [
+            {
+                "id": device.id,
+                "device_name": device.device_name,
+                "id": device.id,
+                "firmware_version": device.firmware_version,
+                "status": device.status,
+                "last_seen": device.last_seen
+            }
+            for device in devices
+        ]
+
+    finally:
+        db.close()
+
+
+    class AssignFirmwareRequest(BaseModel):
+     device_id: str
+    firmware_version: str
+
+
+@router.post("/devices/assign-firmware")
+async def assign_firmware(request: AssignFirmwareRequest):
+
+    db = SessionLocal()
+
+    try:
+        device = (
+            db.query(Device)
+            .filter(Device.device_id == request.device_id)
+            .first()
+        )
+
+        if device is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Device not found"
+            )
+
+        device.firmware_version = request.firmware_version
+        device.status = "Pending Update"
+
+        db.commit()
+        db.refresh(device)
+
+        return {
+            "message": "Firmware assigned successfully",
+            "device_id": device.device_id,
+            "firmware_version": device.firmware_version,
+            "status": device.status
+        }
+
+    finally:
+        db.close()    
+
+    class DeviceStatusRequest(BaseModel):
+     device_id: str
+    status: str    
+
+@router.post("/devices/update-status")
+async def update_device_status(request: DeviceStatusRequest):
+
+    db = SessionLocal()
+
+    try:
+        device = (
+            db.query(Device)
+            .filter(Device.device_id == request.device_id)
+            .first()
+        )
+
+        if device is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Device not found"
+            )
+
+        valid_status = [
+            "Pending",
+            "Updating",
+            "Updated",
+            "Failed"
+        ]
+
+        if request.status not in valid_status:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid status"
+            )
+
+        device.status = request.status
+
+        db.commit()
+        db.refresh(device)
+
+        return {
+            "message": "Device status updated successfully",
+            "id": device.id,
+            "status": device.status
+        }
+
+    finally:
+        db.close()
+
+@router.get("/devices/history")
+async def device_history():
+
+    db = SessionLocal()
+
+    try:
+        devices = (
+            db.query(Device)
+            .order_by(Device.registered_at.desc())
+            .all()
+        )
+
+        return [
+            {
+                "id": device.id,
+                "device_name": device.device_name,
+                "serial_number": device.serial_number,
+                "model": device.model,
+                "firmware_version": device.firmware_version,
+                "assigned_firmware": device.assigned_firmware,
+                "status": device.status,
+                "registered_at": device.registered_at
+            }
+            for device in devices
+        ]
+
+    finally:
+        db.close()
