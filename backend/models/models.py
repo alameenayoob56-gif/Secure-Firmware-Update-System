@@ -43,3 +43,22 @@ class UpdateHistory(Base):
     device_id = Column(Integer, nullable=False)
     update_status = Column(String, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow)
+
+class Deployment(Base):
+    __tablename__ = "deployment"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    device_id = Column(Integer, nullable=False)
+
+    firmware_id = Column(Integer, nullable=False)
+
+    status = Column(String, default="Started")
+
+    started_at = Column(DateTime, default=datetime.utcnow)
+
+    completed_at = Column(DateTime, nullable=True)
+
+    rollback = Column(Boolean, default=False)
+
+    rollback_time = Column(DateTime, nullable=True)    

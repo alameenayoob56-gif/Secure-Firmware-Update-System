@@ -12,3 +12,7 @@ class DeviceUpdate(BaseModel):
     model: str
     firmware_version: str
     status: str
+
+class DeploymentCreate(BaseModel):
+    device_id: int
+    firmware_id: int    
