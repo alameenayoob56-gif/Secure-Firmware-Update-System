@@ -11,6 +11,7 @@ from utils.rsa_utils import sign_data
 from utils.rsa_utils import verify_signature
 
 from utils.encryption_utils import encrypt_file, decrypt_file
+from utils.audit_logger import log_audit
 
 router = APIRouter()
 
@@ -99,6 +100,15 @@ async def upload_firmware(
         db.add(new_firmware)
         db.commit()
         db.refresh(new_firmware)
+
+        log_audit(
+        action="Firmware Upload",
+        firmware_name=firmware_name,
+        version=version,
+        performed_by="admin"
+)
+
+
 
         return {
             "message": "Firmware uploaded and encrypted successfully",
