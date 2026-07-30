@@ -1,26 +1,93 @@
 # Secure-Firmware-Update-System
+
 Enterprise-grade Secure Firmware Update System using FastAPI, React, SQLite, RSA Digital Signatures and JWT Authentication.
 
+## Project Overview
+
+The Secure Firmware Update System provides a secure Over-the-Air (OTA) firmware update solution for IoT and edge devices. It uses RSA Digital Signatures and SHA-256 hashing to verify firmware authenticity and integrity before installation. The project also integrates an automated CI/CD pipeline for secure firmware signing and edge-device verification.
+
+## Features
+
+- Secure Over-the-Air (OTA) firmware updates
+- RSA digital signature verification
+- SHA-256 hash integrity validation
+- Automated firmware signing
+- Edge device verification
+- Firmware encryption
+- JWT-based authentication
+- Firmware version management
+- Secure deployment workflow
+- REST API with Swagger documentation
+
+## Technology Stack
+
+- **Backend:** FastAPI
+- **Frontend:** React
+- **Database:** SQLite, SQLAlchemy ORM
+- **Programming Language:** Python
+- **Cryptography:** RSA, SHA-256, AES (Fernet)
+- **Authentication:** JWT
+- **API Documentation:** Swagger UI
+- **Version Control:** Git & GitHub
+## Folder Structure
+
+```text
+Secure-Firmware-Update-System/
+├── backend/                 # FastAPI backend application
+├── frontend/                # React frontend application
+├── uploads/                 # Uploaded firmware files
+├── docs/                    # Project documentation
+├── README.md                # Project documentation
+└── .gitignore               # Git ignore rules
+```
+## Installation Guide
+
+### Prerequisites
+
+- Python 3.10 or later
+- Git
+- Node.js (for frontend)
+- SQLite
+
+### Installation
+
+1. Clone the repository.
+2. Navigate to the project directory.
+3. Install the required dependencies.
+4. Start the backend server.
+5. Start the frontend application.
+6. Open Swagger UI to test the APIs.
+
+## Team Members
+
+| Name | Role |
+|------|------|
+| Prasad Kedar | Team Lead |
+| Al Ameen Ayoob | Developer |
+| Adarsh | Developer |
+| Nelna K Siyad | Documentation & Testing |
 
 ## Database Design
 
 - SQLite
-- SQLAlchemy ORM
-- Firmware Table
-- Device Table
-- UpdateHistory Table
 
+- SQLAlchemy ORM
+
+- Firmware Table
+
+- Device Table
+
+- UpdateHistory Table
 
 ## Firmware Upload Module
 
-### Features
+ ###Features
 
 - Upload firmware packages
 - Store firmware files in uploads directory
 - Save firmware metadata to SQLite
 - Validate upload requests
 - Test APIs using Swagger UIgit add README.md
-
 
 ## Firmware Integrity Verification
 
@@ -240,7 +307,7 @@ Update Deployment Status
 ↓
 
 Return Success
-
+  
 ## Device Management
 
 ### Features
@@ -259,7 +326,6 @@ Return Success
 - POST /devices/update-status
 
 ### Device Status
-
 - Pending
 - Updating
 - Updated
@@ -300,3 +366,4 @@ Example Response
     "registered_at": "2026-07-27T10:30:00"
   }
 ]
+
