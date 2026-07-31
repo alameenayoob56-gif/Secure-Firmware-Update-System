@@ -9,6 +9,7 @@ from utils.auth_utils import create_access_token, verify_token
 from routers.device import router as device_router
 from routers.deployment import router as deployment_router
 from routers.analytics import router as analytics_router
+from utils.audit_logger import log_audit
 
 app = FastAPI(
     title="Secure Firmware Update System"
@@ -56,7 +57,17 @@ def login(request: LoginRequest):
 
     user = fake_users.get(request.username)
 
+    # Failed Login Audit
     if not user or user["password"] != request.password:
+
+        log_audit(
+            action="Login Failed",
+            firmware_name=None,
+            version=None,
+            device_name=None,
+            performed_by=request.username
+        )
+
         raise HTTPException(
             status_code=401,
             detail="Invalid username or password"
@@ -67,12 +78,21 @@ def login(request: LoginRequest):
         "role": user["role"]
     })
 
+    # Successful Login Audit
+    log_audit(
+        action="Login Success",
+        firmware_name=None,
+        version=None,
+        device_name=None,
+        performed_by=user["username"]
+    )
+
     return {
         "access_token": token,
         "token_type": "bearer",
         "role": user["role"]
-
     }
+
 
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security)
@@ -88,6 +108,7 @@ def get_current_user(
         )
 
     return payload
+
 
 def require_admin(user=Depends(get_current_user)):
     if user.get("role") != "admin":
