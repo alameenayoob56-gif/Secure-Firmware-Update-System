@@ -8,3 +8,7 @@ keys/private_key.pem
 
 # Fernet Key
 keys/aes.key
+
+logs/
+*.log
+.env

@@ -11,13 +11,23 @@ from routers.deployment import router as deployment_router
 from routers.analytics import router as analytics_router
 from utils.audit_logger import log_audit
 
+from logging_config import logger
+from datetime import datetime
+from sqlalchemy import text
+
+
 app = FastAPI(
     title="Secure Firmware Update System"
 )
 
+logger.info("Secure Firmware Update System started successfully.")
+
 security = HTTPBearer()
 
 Base.metadata.create_all(bind=engine)
+logger.info(
+    "Database initialized successfully"
+)
 
 app.include_router(firmware_router)
 app.include_router(device_router)
@@ -26,11 +36,15 @@ app.include_router(deployment_router)
 
 
 @app.get("/")
-def root():
-    return {
-        "message": "Secure Firmware Update System API"
-    }
+def home():
 
+    logger.info(
+        "Home API Accessed"
+    )
+
+    return {
+        "message": "Secure Firmware Update System API Running"
+    }
 
 class LoginRequest(BaseModel):
     username: str
@@ -60,6 +74,11 @@ def login(request: LoginRequest):
     # Failed Login Audit
     if not user or user["password"] != request.password:
 
+        logger.warning(
+    f"Failed login attempt for user: {request.username}"
+)
+
+
         log_audit(
             action="Login Failed",
             firmware_name=None,
@@ -77,6 +96,9 @@ def login(request: LoginRequest):
         "sub": user["username"],
         "role": user["role"]
     })
+    logger.info(
+    f"User '{user['username']}' logged in successfully"
+)
 
     # Successful Login Audit
     log_audit(
@@ -102,6 +124,9 @@ def get_current_user(
     payload = verify_token(token)
 
     if payload is None:
+        logger.warning(
+    "Invalid or expired token used"
+)
         raise HTTPException(
             status_code=401,
             detail="Invalid or expired token"
@@ -136,6 +161,9 @@ def delete_firmware(
     firmware_id: int,
     admin=Depends(require_admin)
 ):
+    logger.info(
+        f"Firmware delete requested | Firmware ID: {firmware_id} | Admin: {admin.get('sub')}"
+    )
 
     return {
         "message": f"Firmware {firmware_id} deleted by admin",
