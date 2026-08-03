@@ -1,5 +1,13 @@
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Depends,
+    Request
+)
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials 
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from pydantic import BaseModel
 
 from database.db import Base, engine
@@ -34,6 +42,62 @@ app.include_router(device_router)
 app.include_router(analytics_router)
 app.include_router(deployment_router)
 
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(
+    request: Request,
+    exc: StarletteHTTPException
+):
+
+    logger.warning(
+        f"HTTP Exception: {exc.detail}"
+    )
+
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "success": False,
+            "status": exc.status_code,
+            "message": exc.detail
+        }
+    )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+    request: Request,
+    exc: RequestValidationError
+):
+
+    logger.warning(
+        "Validation Error"
+    )
+
+    return JSONResponse(
+        status_code=422,
+        content={
+            "success": False,
+            "status": 422,
+            "message": "Validation Error",
+            "errors": exc.errors()
+        }
+    )
+@app.exception_handler(Exception)
+async def global_exception_handler(
+    request: Request,
+    exc: Exception
+):
+
+    logger.exception(
+        str(exc)
+    )
+
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "status": 500,
+            "message": "Internal Server Error"
+        }
+    )
 
 @app.get("/")
 def home():
