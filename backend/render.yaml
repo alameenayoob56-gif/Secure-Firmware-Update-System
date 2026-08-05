@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: secure-firmware-update-system
+
+    env: docker
+
+    plan: free
+
+    autoDeploy: true

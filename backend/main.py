@@ -233,3 +233,32 @@ def delete_firmware(
         "message": f"Firmware {firmware_id} deleted by admin",
         "admin": admin.get("sub")
     }
+
+@app.get("/health")
+def health():
+
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+
+        logger.info("Health check executed successfully")
+
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "version": "1.0.0",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
+    except Exception as e:
+
+        logger.exception("Health check failed")
+
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "status": "unhealthy",
+                "database": "disconnected",
+                "error": str(e)
+            }
+        )
