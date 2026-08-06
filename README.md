@@ -367,3 +367,141 @@ Example Response
   }
 ]
 
+
+# Secure Firmware Update System
+
+A production-ready Secure Firmware Update System built with FastAPI.
+
+## Features
+
+- JWT Authentication
+- Firmware Management
+- Device Management
+- Deployment Tracking
+- Analytics Dashboard
+- Audit Logging
+- Health Check API
+- Docker Support
+- Global Exception Handling
+
+
+## Installation
+
+```bash
+git clone <repository-url>
+
+cd backend
+
+python -m venv venv
+
+venv\Scripts\activate
+
+pip install -r requirements.txt
+
+uvicorn main:app --reload --port 8001
+
+## Environment Variables
+
+Create a .env file.
+
+DATABASE_URL=
+
+SECRET_KEY=
+
+ALGORITHM=
+
+ACCESS_TOKEN_EXPIRE_MINUTES=
+
+## Docker
+
+Build
+
+docker build -t secure-firmware-api .
+
+Run
+
+docker run -p 8001:8001 secure-firmware-api
+
+## Main APIs
+
+GET /
+
+GET /health
+
+POST /login
+
+GET /firmware
+
+POST /firmware
+
+DELETE /firmware/{id}
+
+GET /analytics
+
+## Deployment
+
+Platform
+
+Render
+
+Docker
+
+Docker Compose
+
+Python 3.12
+
+
+## Troubleshooting
+
+ImportError
+
+Run
+
+pip install -r requirements.txt
+
+Authentication Error
+
+Check JWT Secret
+
+Docker Error
+
+docker compose up --build
+
+Database Error
+
+Verify DATABASE_URL
+
+backend/
+
+main.py
+
+routers/
+
+models/
+
+database/
+
+utils/
+
+logs/
+
+Dockerfile
+
+docker-compose.yml
+
+render.yaml
+
+requirements.txt
+
+## Continuous Integration (CI)
+
+This project uses GitHub Actions for Continuous Integration.
+
+### Automated Workflow
+
+- Python Environment Setup
+- Dependency Installation
+- Backend Startup Verification
+- Automated Build Validation
+
+The workflow runs automatically on every push and pull request to ensure code quality and application stability.
