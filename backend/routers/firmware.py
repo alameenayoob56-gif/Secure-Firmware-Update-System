@@ -15,6 +15,7 @@ from utils.audit_logger import log_audit
 
 router = APIRouter()
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -22,8 +23,10 @@ def get_db():
     finally:
         db.close()
 
+
 class DeployRequest(BaseModel):
-     version: str       
+    version: str
+
 
 os.makedirs("uploads", exist_ok=True)
 
@@ -32,7 +35,7 @@ os.makedirs("uploads", exist_ok=True)
 async def upload_firmware(
     firmware: UploadFile = File(...),
     version: str = Form(...),
-    firmware_name: str = Form(...)
+    firmware_name: str = Form(...),
 ):
     # Validate input
     if firmware.filename == "":
@@ -54,10 +57,7 @@ async def upload_firmware(
 
     encrypted_path = f"encrypted/{firmware.filename}.enc"
 
-    encrypt_file(
-    input_file=file_path,
-    output_file=encrypted_path
-)    
+    encrypt_file(input_file=file_path, output_file=encrypted_path)
 
     # Generate SHA-256 hash
     hash_value = generate_sha256(file_path)
@@ -70,23 +70,15 @@ async def upload_firmware(
     signature = sign_data(firmware_data)
     signature_hex = signature.hex()
 
-
-     # Database session
+    # Database session
     db = SessionLocal()
 
     # Check duplicate firmware version
-    existing_firmware = (
-        db.query(Firmware)
-        .filter(Firmware.version == version)
-        .first()
-    )
+    existing_firmware = db.query(Firmware).filter(Firmware.version == version).first()
 
     if existing_firmware:
         db.close()
-        raise HTTPException(
-            status_code=400,
-            detail="Firmware version already exists"
-        )
+        raise HTTPException(status_code=400, detail="Firmware version already exists")
 
     try:
         new_firmware = Firmware(
@@ -94,7 +86,7 @@ async def upload_firmware(
             version=version,
             hash=hash_value,
             signature=signature_hex,
-            encrypted_file=encrypted_path
+            encrypted_file=encrypted_path,
         )
 
         db.add(new_firmware)
@@ -102,13 +94,11 @@ async def upload_firmware(
         db.refresh(new_firmware)
 
         log_audit(
-        action="Firmware Upload",
-        firmware_name=firmware_name,
-        version=version,
-        performed_by="admin"
-)
-
-
+            action="Firmware Upload",
+            firmware_name=firmware_name,
+            version=version,
+            performed_by="admin",
+        )
 
         return {
             "message": "Firmware uploaded and encrypted successfully",
@@ -118,7 +108,7 @@ async def upload_firmware(
             "filename": firmware.filename,
             "encrypted_file": encrypted_path,
             "hash": hash_value,
-            "signature": signature_hex
+            "signature": signature_hex,
         }
 
     finally:
@@ -140,22 +130,16 @@ async def verify_firmware(file: UploadFile = File(...)):
         firmware = db.query(Firmware).first()
 
         if firmware is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Firmware not found"
-            )
+            raise HTTPException(status_code=404, detail="Firmware not found")
 
         if generated_hash == firmware.hash:
-            return {
-                "status": "Valid"
-            }
+            return {"status": "Valid"}
 
-        return {
-            "status": "Tampered"
-        }
+        return {"status": "Tampered"}
 
     finally:
         db.close()
+
 
 @router.post("/firmware/verify-signature")
 async def verify_signature_api(file: UploadFile = File(...)):
@@ -169,17 +153,10 @@ async def verify_signature_api(file: UploadFile = File(...)):
 
     try:
         # Get latest firmware from database
-        firmware = (
-            db.query(Firmware)
-            .order_by(Firmware.id.desc())
-            .first()
-        )
+        firmware = db.query(Firmware).order_by(Firmware.id.desc()).first()
 
         if firmware is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Firmware not found"
-            )
+            raise HTTPException(status_code=404, detail="Firmware not found")
 
         # Read uploaded firmware
         with open(file_path, "rb") as f:
@@ -194,75 +171,51 @@ async def verify_signature_api(file: UploadFile = File(...)):
         stored_signature = bytes.fromhex(firmware.signature)
 
         # Verify signature
-        result = verify_signature(
-            firmware_data,
-            stored_signature
-        )
+        result = verify_signature(firmware_data, stored_signature)
 
         if result:
-            return {
-                "status": "Signature Verified"
-            }
+            return {"status": "Signature Verified"}
 
-        return {
-            "status": "Invalid Signature"
-        }
+        return {"status": "Invalid Signature"}
 
     except Exception as e:
         print("ERROR:", e)
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=500, detail=str(e))
 
     finally:
         db.close()
 
-        
+
 @router.post("/firmware/decrypt")
 async def decrypt_firmware(filename: str = Form(...)):
 
     encrypted_file = f"encrypted/{filename}.enc"
 
     if not os.path.exists(encrypted_file):
-        raise HTTPException(
-            status_code=404,
-            detail="Encrypted firmware not found"
-        )
+        raise HTTPException(status_code=404, detail="Encrypted firmware not found")
 
     os.makedirs("decrypted", exist_ok=True)
 
     output_file = f"decrypted/{filename}"
 
-    decrypt_file(
-        input_file=encrypted_file,
-        output_file=output_file
-    )
+    decrypt_file(input_file=encrypted_file, output_file=output_file)
 
-    return {
-        "message": "Firmware decrypted successfully",
-        "decrypted_file": output_file
-    }
+    return {"message": "Firmware decrypted successfully", "decrypted_file": output_file}
+
 
 @router.get("/firmware/latest")
 def latest_firmware(db: Session = Depends(get_db)):
-    firmware = (
-        db.query(Firmware)
-        .order_by(Firmware.release_date.desc())
-        .first()
-    )
+    firmware = db.query(Firmware).order_by(Firmware.release_date.desc()).first()
 
     if not firmware:
-        raise HTTPException(
-            status_code=404,
-            detail="No firmware found"
-        )
+        raise HTTPException(status_code=404, detail="No firmware found")
 
     return {
         "firmware_name": firmware.firmware_name,
         "version": firmware.version,
         "release_date": firmware.release_date,
     }
+
 
 @router.post("/firmware/rollback")
 async def rollback_firmware(version: str = Form(...)):
@@ -272,23 +225,14 @@ async def rollback_firmware(version: str = Form(...)):
     try:
 
         # Find requested firmware version
-        firmware = (
-            db.query(Firmware)
-            .filter(Firmware.version == version)
-            .first()
-        )
+        firmware = db.query(Firmware).filter(Firmware.version == version).first()
 
         if firmware is None:
-            raise HTTPException(
-                status_code=404,
-                detail="Firmware version not found"
-            )
+            raise HTTPException(status_code=404, detail="Firmware version not found")
 
         # Deactivate current active firmware
         active_firmware = (
-            db.query(Firmware)
-            .filter(Firmware.is_active == True)
-            .first()
+            db.query(Firmware).filter(Firmware.is_active.is_(True)).first()
         )
 
         if active_firmware:
@@ -296,18 +240,19 @@ async def rollback_firmware(version: str = Form(...)):
             active_firmware.deployment_status = "Rolled Back"
 
         # Activate selected firmware
-        firmware.is_active = True
-        firmware.deployment_status = "Deployed"
+        if firmware.is_active:
+            firmware.deployment_status = "Deployed"
 
         db.commit()
 
         return {
             "message": "Firmware rollback successful",
-            "active_version": firmware.version
+            "active_version": firmware.version,
         }
 
     finally:
         db.close()
+
 
 @router.get("/firmware/history")
 async def firmware_history():
@@ -315,11 +260,7 @@ async def firmware_history():
     db = SessionLocal()
 
     try:
-        firmwares = (
-            db.query(Firmware)
-            .order_by(Firmware.uploaded_at.desc())
-            .all()
-        )
+        firmwares = db.query(Firmware).order_by(Firmware.uploaded_at.desc()).all()
 
         return [
             {
@@ -330,7 +271,7 @@ async def firmware_history():
                 "is_active": fw.is_active,
                 "rollback_from": fw.rollback_from,
                 "uploaded_at": fw.uploaded_at,
-                "release_date": fw.release_date
+                "release_date": fw.release_date,
             }
             for fw in firmwares
         ]
@@ -342,24 +283,14 @@ async def firmware_history():
 @router.post("/firmware/deploy")
 def deploy_firmware(request: DeployRequest, db: Session = Depends(get_db)):
 
-    firmware = (
-        db.query(Firmware)
-        .filter(Firmware.version == request.version)
-        .first()
-    )
+    firmware = db.query(Firmware).filter(Firmware.version == request.version).first()
 
     if firmware is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Firmware version not found"
-        )
+        raise HTTPException(status_code=404, detail="Firmware version not found")
 
     # Deactivate all firmware
     db.query(Firmware).update(
-        {
-            Firmware.is_active: False,
-            Firmware.deployment_status: "Pending"
-        }
+        {Firmware.is_active: False, Firmware.deployment_status: "Pending"}
     )
 
     # Activate selected firmware
@@ -371,5 +302,5 @@ def deploy_firmware(request: DeployRequest, db: Session = Depends(get_db)):
 
     return {
         "message": "Firmware deployed successfully",
-        "active_version": firmware.version
-    }    
+        "active_version": firmware.version,
+    }

@@ -5,7 +5,6 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 
-
 # -----------------------------
 # Key Paths
 # -----------------------------
@@ -20,14 +19,13 @@ PUBLIC_KEY_PATH = os.path.join(KEYS_DIR, "public_key.pem")
 # Generate RSA Keys
 # -----------------------------
 
+
 def generate_keys():
 
     os.makedirs(KEYS_DIR, exist_ok=True)
 
     private_key = rsa.generate_private_key(
-        public_exponent=65537,
-        key_size=2048,
-        backend=default_backend()
+        public_exponent=65537, key_size=2048, backend=default_backend()
     )
 
     public_key = private_key.public_key()
@@ -37,7 +35,7 @@ def generate_keys():
             private_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
                 format=serialization.PrivateFormat.PKCS8,
-                encryption_algorithm=serialization.NoEncryption()
+                encryption_algorithm=serialization.NoEncryption(),
             )
         )
 
@@ -45,7 +43,7 @@ def generate_keys():
         public_file.write(
             public_key.public_bytes(
                 encoding=serialization.Encoding.PEM,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo
+                format=serialization.PublicFormat.SubjectPublicKeyInfo,
             )
         )
 
@@ -56,14 +54,13 @@ def generate_keys():
 # Load Private Key
 # -----------------------------
 
+
 def load_private_key():
 
     with open(PRIVATE_KEY_PATH, "rb") as file:
 
         return serialization.load_pem_private_key(
-            file.read(),
-            password=None,
-            backend=default_backend()
+            file.read(), password=None, backend=default_backend()
         )
 
 
@@ -71,19 +68,18 @@ def load_private_key():
 # Load Public Key
 # -----------------------------
 
+
 def load_public_key():
 
     with open(PUBLIC_KEY_PATH, "rb") as file:
 
-        return serialization.load_pem_public_key(
-            file.read(),
-            backend=default_backend()
-        )
+        return serialization.load_pem_public_key(file.read(), backend=default_backend())
 
 
 # -----------------------------
 # Sign Data
 # -----------------------------
+
 
 def sign_data(data: bytes):
 
@@ -92,10 +88,9 @@ def sign_data(data: bytes):
     signature = private_key.sign(
         data,
         padding.PSS(
-            mgf=padding.MGF1(hashes.SHA256()),
-            salt_length=padding.PSS.MAX_LENGTH
+            mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH
         ),
-        hashes.SHA256()
+        hashes.SHA256(),
     )
 
     return signature
@@ -104,6 +99,7 @@ def sign_data(data: bytes):
 # -----------------------------
 # Verify Signature
 # -----------------------------
+
 
 def verify_signature(data: bytes, signature: bytes):
 
@@ -115,10 +111,9 @@ def verify_signature(data: bytes, signature: bytes):
             signature,
             data,
             padding.PSS(
-                mgf=padding.MGF1(hashes.SHA256()),
-                salt_length=padding.PSS.MAX_LENGTH
+                mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.MAX_LENGTH
             ),
-            hashes.SHA256()
+            hashes.SHA256(),
         )
 
         return True

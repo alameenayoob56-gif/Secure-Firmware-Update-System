@@ -7,7 +7,7 @@ def log_audit(
     firmware_name: str = None,
     version: str = None,
     device_name: str = None,
-    performed_by: str = "system"
+    performed_by: str = "system",
 ):
     db = SessionLocal()
 
@@ -17,7 +17,7 @@ def log_audit(
             firmware_name=firmware_name,
             version=version,
             device_name=device_name,
-            performed_by=performed_by
+            performed_by=performed_by,
         )
 
         db.add(audit)

@@ -44,6 +44,7 @@ class UpdateHistory(Base):
     update_status = Column(String, nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow)
 
+
 class Deployment(Base):
     __tablename__ = "deployment"
 
@@ -61,8 +62,7 @@ class Deployment(Base):
 
     rollback = Column(Boolean, default=False)
 
-
-    rollback_time = Column(DateTime, nullable=True)    
+    rollback_time = Column(DateTime, nullable=True)
 
 
 class AuditLog(Base):
@@ -80,7 +80,6 @@ class AuditLog(Base):
 
     performed_by = Column(String)
 
-    timestamp = Column(DateTime, default=datetime.utcnow)    
+    timestamp = Column(DateTime, default=datetime.utcnow)
 
-    rollback_time = Column(DateTime, nullable=True)    
-
+    rollback_time = Column(DateTime, nullable=True)

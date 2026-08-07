@@ -6,6 +6,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KEYS_DIR = os.path.join(BASE_DIR, "keys")
 KEY_FILE = os.path.join(KEYS_DIR, "aes.key")
 
+
 def generate_key():
     """
     Generate a Fernet encryption key and save it.

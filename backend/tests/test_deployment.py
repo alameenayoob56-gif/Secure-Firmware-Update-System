@@ -1,5 +1,4 @@
 def test_deployment_status(client):
-
     response = client.get("/deployment/status")
 
     assert response.status_code == 200
@@ -10,7 +9,6 @@ def test_deployment_status(client):
 
 
 def test_deployment_history(client):
-
     response = client.get("/deployment/history")
 
     assert response.status_code == 200
@@ -19,25 +17,23 @@ def test_deployment_history(client):
 
 
 def test_invalid_rollback(client):
-
     response = client.post(
         "/deployment/rollback",
         json={
-            "deployment_id": 999999
-        }
+            "deployment_id": 999999,
+        },
     )
 
     assert response.status_code == 404
 
 
 def test_invalid_deployment(client):
-
     response = client.post(
         "/deployment/deploy",
         json={
             "device_id": 999999,
-            "firmware_id": 999999
-        }
+            "firmware_id": 999999,
+        },
     )
 
     assert response.status_code == 404
