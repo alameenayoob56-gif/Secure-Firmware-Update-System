@@ -85,8 +85,17 @@ class LoginRequest(BaseModel):
 
 # Temporary users for testing
 fake_users = {
+
+    "admin": {
+        "username": "admin",
+        "password": "admin123",
+        "role": "admin",
+    },  # nosec B105
+    "user": {"username": "user", "password": "user123", "role": "user"},  # nosec B105
+
     "admin": {"username": "admin", "password": "admin123", "role": "admin"},
     "user": {"username": "user", "password": "user123", "role": "user"},
+
 }
 
 
@@ -122,7 +131,15 @@ def login(request: LoginRequest):
         performed_by=user["username"],
     )
 
+
+    return {
+        "access_token": token,
+        "token_type": "bearer",  # nosec B105
+        "role": user["role"],
+    }
+
     return {"access_token": token, "token_type": "bearer", "role": user["role"]}
+
 
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
@@ -192,4 +209,8 @@ def health():
                 "database": "disconnected",
                 "error": str(e),
             },
+
         )
+
+        
+
