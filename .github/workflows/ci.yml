@@ -49,3 +49,24 @@ jobs:
       - name: CI Completed
         run: echo "Backend verification completed successfully."
         
+  docker-build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: false
+          tags: secure-firmware-update-system:latest
+
+      - name: Docker Build Completed
+        run: echo "Docker image built successfully."        
