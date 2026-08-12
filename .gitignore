@@ -1,14 +1,28 @@
+# Python
 venv/
+.venv/
 __pycache__/
-*.pyc
-firmware.db
+*.py[cod]
 
-# RSA Keys
-keys/private_key.pem
+# Environment
+.env
+.env.*
+!.env.example
 
-# Fernet Key
-keys/aes.key
-
+# Logs
 logs/
 *.log
-.env
+
+# Local database
+*.db
+*.sqlite
+*.sqlite3
+
+# Cryptographic private keys
+backend/keys/private_key.pem
+keys/private_key.pem
+keys/aes.key
+backend/keys/aes.key
+
+# Temporary security backups
+*.bundle

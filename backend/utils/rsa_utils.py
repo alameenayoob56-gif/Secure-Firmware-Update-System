@@ -9,7 +9,8 @@ from cryptography.hazmat.primitives.asymmetric import padding, rsa
 # Key Paths
 # -----------------------------
 
-KEYS_DIR = "keys"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+KEYS_DIR = os.path.join(BASE_DIR, "keys")
 
 PRIVATE_KEY_PATH = os.path.join(KEYS_DIR, "private_key.pem")
 PUBLIC_KEY_PATH = os.path.join(KEYS_DIR, "public_key.pem")

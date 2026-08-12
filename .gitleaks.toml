@@ -1,0 +1,11 @@
+title = "Secure Firmware Update System Gitleaks Configuration"
+
+[allowlist]
+description = "Ignore local cryptographic private keys that are intentionally excluded from Git"
+
+paths = [
+    '''backend/keys/private_key\.pem$''',
+    '''keys/private_key\.pem$''',
+    '''backend/keys/aes\.key$''',
+    '''keys/aes\.key$'''
+]
