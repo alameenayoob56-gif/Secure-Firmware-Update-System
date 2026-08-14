@@ -367,7 +367,6 @@ Example Response
   }
 ]
 
-
 # Secure Firmware Update System
 
 A production-ready Secure Firmware Update System built with FastAPI.
@@ -505,3 +504,4 @@ This project uses GitHub Actions for Continuous Integration.
 - Automated Build Validation
 
 The workflow runs automatically on every push and pull request to ensure code quality and application stability.
+
