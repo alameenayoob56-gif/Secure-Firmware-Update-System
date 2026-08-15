@@ -1,0 +1,69 @@
+.refresh-api-button {
+  padding: 10px 16px;
+  border: 1px solid rgb(126, 242, 76);
+  border-radius: 6px;
+  color: #071006;
+  background-color: rgb(126, 242, 76);
+  cursor: pointer;
+}
+
+.health-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px;
+  margin-bottom: 28px;
+  border: 1px solid #253126;
+  border-radius: 10px;
+  background-color: #101610;
+}
+
+.health-label {
+  color: #8d9b89;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.health-status-card h2 {
+  margin: 10px 0 0;
+}
+
+.healthy-text {
+  color: rgb(126, 242, 76);
+}
+
+.unhealthy-text {
+  color: #ff8888;
+}
+
+.health-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.health-details p {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  margin: 0;
+  color: #8d9b89;
+}
+
+.health-details strong {
+  color: #dce8d8;
+}
+
+.api-message {
+  padding: 14px;
+  margin-bottom: 22px;
+  border-radius: 6px;
+}
+
+@media (max-width: 700px) {
+  .health-status-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
