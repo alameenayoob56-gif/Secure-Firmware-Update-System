@@ -1,97 +1,136 @@
+import { useEffect, useState } from "react";
+import { getFirmwareHistory } from "../services/firmwareService";
 import "../styles/firmwareHistory.css";
 
 function FirmwareHistoryPage() {
-  const firmwareVersions = [
-    {
-      version: "v1.2.0",
-      build: "42",
-      hash: "6a2b4c8d91ef...90e1",
-      date: "18 July 2026",
-      status: "Published",
-    },
-    {
-      version: "v1.1.5",
-      build: "41",
-      hash: "7c409d3a21be...1abd",
-      date: "10 July 2026",
-      status: "Published",
-    },
-    {
-      version: "v1.1.0",
-      build: "40",
-      hash: "8f11b2c4d07a...94c2",
-      date: "02 July 2026",
-      status: "Retired",
-    },
-    {
-      version: "v1.0.9",
-      build: "39",
-      hash: "2e80a5cd190f...30ba",
-      date: "20 June 2026",
-      status: "Retired",
-    },
-  ];
+  const [firmwareVersions, setFirmwareVersions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function loadFirmwareHistory() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data = await getFirmwareHistory();
+        setFirmwareVersions(data);
+      } catch (requestError) {
+        setError(
+          requestError.response?.data?.message ||
+            "Unable to load firmware history. Check the backend connection."
+        );
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadFirmwareHistory();
+  }, []);
+
+  function formatDate(dateValue) {
+    if (!dateValue) {
+      return "Not available";
+    }
+
+    return new Date(dateValue).toLocaleDateString();
+  }
+
+  function getStatusClass(status) {
+    return (status || "Unknown")
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+  }
+
+  const latestFirmware =
+    firmwareVersions.find((firmware) => firmware.is_active) ||
+    firmwareVersions[0];
 
   return (
     <div className="firmware-history-page">
       <div className="page-heading">
         <div>
           <h1>Firmware History</h1>
-          <p>Review signed firmware releases and their integrity records.</p>
+          <p>Review uploaded firmware releases and deployment status.</p>
         </div>
-
-        <button className="history-upload-button">+ Upload Firmware</button>
       </div>
 
-      <section className="latest-release-card">
-        <div>
-          <span className="latest-label">LATEST SIGNED RELEASE</span>
-          <h2>v1.2.0</h2>
-          <p>Build 42 · Published 18 July 2026</p>
+      {loading && (
+        <div className="history-message loading-message">
+          Loading firmware history...
         </div>
+      )}
 
-        <div className="signature-verified">
-          ✓ Signature Verified
+      {error && (
+        <div className="history-message error-message">
+          {error}
         </div>
-      </section>
+      )}
+
+      {!loading && !error && latestFirmware && (
+        <section className="latest-release-card">
+          <div>
+            <span className="latest-label">LATEST FIRMWARE RELEASE</span>
+            <h2>{latestFirmware.version}</h2>
+            <p>
+              {latestFirmware.firmware_name} · Released{" "}
+              {formatDate(latestFirmware.release_date)}
+            </p>
+          </div>
+
+          <span className="active-firmware-status">
+            {latestFirmware.is_active ? "● Active" : "● Latest Upload"}
+          </span>
+        </section>
+      )}
 
       <section className="firmware-history-panel">
         <div className="history-panel-heading">
           <h2>Release Records</h2>
-          <span>All firmware files are SHA-256 verified.</span>
+          <span>{firmwareVersions.length} firmware record(s)</span>
         </div>
 
         <div className="table-container">
           <table className="firmware-history-table">
             <thead>
               <tr>
+                <th>Firmware Name</th>
                 <th>Version</th>
-                <th>Build</th>
-                <th>SHA-256 Hash</th>
-                <th>Published Date</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th>Release Date</th>
+                <th>Deployment Status</th>
+                <th>Active</th>
               </tr>
             </thead>
 
             <tbody>
-              {firmwareVersions.map((firmware) => (
-                <tr key={firmware.build}>
-                  <td className="version-cell">{firmware.version}</td>
-                  <td>{firmware.build}</td>
-                  <td>
-                    <code>{firmware.hash}</code>
+              {!loading && !error && firmwareVersions.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="empty-history">
+                    No firmware records found.
                   </td>
-                  <td>{firmware.date}</td>
+                </tr>
+              )}
+
+              {firmwareVersions.map((firmware) => (
+                <tr key={firmware.id}>
+                  <td>{firmware.firmware_name}</td>
+                  <td className="version-cell">{firmware.version}</td>
+                  <td>{formatDate(firmware.release_date)}</td>
                   <td>
                     <span
-                      className={`firmware-status ${firmware.status.toLowerCase()}`}
+                      className={`firmware-status ${getStatusClass(
+                        firmware.deployment_status
+                      )}`}
                     >
-                      {firmware.status}
+                      {firmware.deployment_status || "Unknown"}
                     </span>
                   </td>
                   <td>
-                    <button className="manifest-button">View Manifest</button>
+                    {firmware.is_active ? (
+                      <span className="active-tag">Active</span>
+                    ) : (
+                      "No"
+                    )}
                   </td>
                 </tr>
               ))}

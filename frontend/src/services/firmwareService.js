@@ -1,48 +1,96 @@
 import api from "./api";
 
-const wait = (milliseconds) =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds));
+export async function uploadFirmware(
+  { firmwareFile, firmwareName, firmwareVersion },
+  onProgress
+) {
+  const formData = new FormData();
 
-export async function uploadFirmware(formData, onProgress) {
-  const apiEnabled =
-    import.meta.env.VITE_ENABLE_FIRMWARE_API === "true";
+  formData.append("firmware", firmwareFile);
+  formData.append("version", firmwareVersion);
+  formData.append("firmware_name", firmwareName);
 
-  // Demo mode: used until the backend team confirms the final endpoint.
-  if (!apiEnabled) {
-    onProgress(25);
-    await wait(400);
+  const response = await api.post("/firmware/upload", formData, {
+    onUploadProgress: (event) => {
+      if (!event.total) return;
 
-    onProgress(60);
-    await wait(500);
+      const percentage = Math.round(
+        (event.loaded * 100) / event.total
+      );
 
-    onProgress(100);
-    await wait(400);
+      onProgress(percentage);
+    },
+  });
 
-    return {
-      message:
-        "Firmware validated successfully. Backend upload is ready to be connected.",
-    };
-  }
+  return response.data;
+}
 
-  // Real API mode: enable only after the backend endpoint is confirmed.
+export async function getFirmwareHistory() {
+  const response = await api.get("/firmware/history");
+  return response.data;
+}
+
+export async function getLatestFirmware() {
+  const response = await api.get("/firmware/latest");
+  return response.data;
+}
+
+export async function verifyFirmware(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post("/firmware/verify", formData);
+  return response.data;
+}
+
+export async function verifyFirmwareSignature(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
   const response = await api.post(
-    import.meta.env.VITE_FIRMWARE_UPLOAD_PATH,
-    formData,
+    "/firmware/verify-signature",
+    formData
+  );
+
+  return response.data;
+}
+
+export async function decryptFirmware(filename) {
+  const formData = new FormData();
+  formData.append("filename", filename);
+
+  const response = await api.post("/firmware/decrypt", formData);
+  return response.data;
+}
+
+export async function deployFirmware(version) {
+  const response = await api.post("/firmware/deploy", {
+    version,
+  });
+
+  return response.data;
+}
+
+export async function rollbackFirmware(version) {
+  const formData = new FormData();
+  formData.append("version", version);
+
+  const response = await api.post("/firmware/rollback", formData);
+  return response.data;
+}
+
+export async function downloadFirmware(firmwareId) {
+  const response = await api.get(
+    `/firmware/download/${firmwareId}`,
     {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      onUploadProgress: (event) => {
-        if (!event.total) return;
-
-        const percentage = Math.round(
-          (event.loaded * 100) / event.total
-        );
-
-        onProgress(percentage);
-      },
+      responseType: "blob",
     }
   );
 
+  return response.data;
+}
+
+export async function deleteFirmware(firmwareId) {
+  const response = await api.delete(`/firmware/${firmwareId}`);
   return response.data;
 }
