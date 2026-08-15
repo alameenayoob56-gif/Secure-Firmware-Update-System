@@ -50,11 +50,7 @@ function UploadFirmwarePage() {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("firmware_file", firmwareFile);
-    formData.append("firmware_name", firmwareName);
-    formData.append("firmware_version", firmwareVersion);
-    formData.append("release_notes", releaseNotes);
+  
 
     try {
       setIsUploading(true);
@@ -62,8 +58,14 @@ function UploadFirmwarePage() {
       setMessageType("progress");
       setMessage("Preparing secure firmware upload...");
 
-      const response = await uploadFirmware(formData, setProgress);
-
+    const response = await uploadFirmware(
+  {
+    firmwareFile,
+    firmwareName,
+    firmwareVersion,
+  },
+  setProgress
+);
       setMessageType("success");
       setMessage(
         response.message || "Firmware uploaded successfully."
