@@ -168,3 +168,76 @@
     grid-template-columns: 1fr;
   }
 }
+
+.device-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.refresh-devices-button {
+  padding: 10px 14px;
+  border: 1px solid rgb(126, 242, 76);
+  border-radius: 6px;
+  color: rgb(126, 242, 76);
+  background: transparent;
+  cursor: pointer;
+}
+
+.device-message {
+  padding: 14px;
+  margin-bottom: 22px;
+  border-radius: 6px;
+}
+
+.device-status.updated {
+  border: 1px solid rgba(126, 242, 76, 0.35);
+  color: rgb(126, 242, 76);
+  background-color: rgba(126, 242, 76, 0.1);
+}
+
+.device-status.updating {
+  border: 1px solid rgba(101, 185, 255, 0.35);
+  color: #80c6ff;
+  background-color: rgba(101, 185, 255, 0.1);
+}
+
+.device-status.pending {
+  border: 1px solid rgba(255, 178, 75, 0.35);
+  color: #ffb24b;
+  background-color: rgba(255, 178, 75, 0.1);
+}
+
+.device-status.failed {
+  border: 1px solid rgba(255, 95, 95, 0.35);
+  color: #ff8888;
+  background-color: rgba(255, 95, 95, 0.1);
+}
+
+.updated-text {
+  color: rgb(126, 242, 76) !important;
+}
+
+.updating-text {
+  color: #80c6ff !important;
+}
+
+.failed-text {
+  color: #ff8888 !important;
+}
+
+.empty-devices {
+  padding: 24px !important;
+  color: #8d9b89 !important;
+  text-align: center !important;
+}
+
+@media (max-width: 650px) {
+  .device-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .refresh-devices-button {
+    width: 100%;
+  }
+}
