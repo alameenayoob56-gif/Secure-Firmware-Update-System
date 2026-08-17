@@ -1,50 +1,72 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
-import Sidebar from "./components/Sidebar";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { isAuthenticated } from "./services/auth";
+
 import DashboardPage from "./pages/DashboardPage";
+import LoginPage from "./pages/LoginPage";
 import UploadFirmwarePage from "./pages/UploadFirmwarePage";
 import DevicesPage from "./pages/DevicesPage";
 import FirmwareHistoryPage from "./pages/FirmwareHistoryPage";
 import ApiIntegrationPage from "./pages/ApiIntegrationPage";
-import LoginPage from "./pages/LoginPage";
+
 import "./App.css";
 
-function AppContent() {
-  const location = useLocation();
-
-  if (location.pathname === "/login") {
-    return (
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
-    );
-  }
-
-  return (
-    <div className="app-layout">
-      <Sidebar />
-
-      <main className="main-content">
-        <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/upload" element={<UploadFirmwarePage />} />
-          <Route path="/devices" element={<DevicesPage />} />
-          <Route path="/firmware-history" element={<FirmwareHistoryPage />} />
-          <Route path="/api-integration" element={<ApiIntegrationPage />} />
-        </Routes>
-      </main>
-    </div>
-  );
+function ProtectedRoute({ children }) {
+  return isAuthenticated() ? children : <Navigate to="/login" replace />;
 }
 
 function App() {
   return (
     <BrowserRouter>
-      <AppContent />
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/upload"
+          element={
+            <ProtectedRoute>
+              <UploadFirmwarePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/devices"
+          element={
+            <ProtectedRoute>
+              <DevicesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/firmware-history"
+          element={
+            <ProtectedRoute>
+              <FirmwareHistoryPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/api-integration"
+          element={
+            <ProtectedRoute>
+              <ApiIntegrationPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </BrowserRouter>
   );
 }
