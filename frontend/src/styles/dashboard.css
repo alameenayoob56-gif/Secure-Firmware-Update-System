@@ -180,3 +180,62 @@
     grid-template-columns: 1fr;
   }
 }
+
+.dashboard-message {
+  padding: 14px;
+  margin-bottom: 22px;
+  border-radius: 6px;
+}
+
+.success-number {
+  color: rgb(126, 242, 76) !important;
+}
+
+.dashboard-data-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+  margin-bottom: 22px;
+}
+
+.latest-firmware-details,
+.distribution-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.latest-firmware-details p,
+.distribution-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  margin: 0;
+  border-bottom: 1px solid #253126;
+  color: #dce8d8;
+}
+
+.latest-firmware-details span {
+  color: #8d9b89;
+}
+
+.distribution-row strong {
+  color: rgb(126, 242, 76);
+}
+
+.empty-dashboard {
+  padding: 18px;
+  color: #8d9b89;
+  text-align: center;
+}
+
+.recent-history-section {
+  margin-top: 22px;
+}
+
+@media (max-width: 800px) {
+  .dashboard-data-grid {
+    grid-template-columns: 1fr;
+  }
+}
