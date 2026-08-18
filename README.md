@@ -1,507 +1,907 @@
-# Secure-Firmware-Update-System
+🔐 Secure Firmware Update System
 
-Enterprise-grade Secure Firmware Update System using FastAPI, React, SQLite, RSA Digital Signatures and JWT Authentication.
+Enterprise-grade Secure OTA Firmware Update Platform for IoT and Edge Devices
 
-## Project Overview
+A security-focused firmware update platform designed to securely upload, validate, sign, encrypt, deploy, and manage firmware for IoT and edge devices.
 
-The Secure Firmware Update System provides a secure Over-the-Air (OTA) firmware update solution for IoT and edge devices. It uses RSA Digital Signatures and SHA-256 hashing to verify firmware authenticity and integrity before installation. The project also integrates an automated CI/CD pipeline for secure firmware signing and edge-device verification.
+The system combines FastAPI, React, SQLite, SQLAlchemy, RSA digital signatures, SHA-256 integrity verification, Fernet encryption, JWT authentication, role-based authorization, audit logging, rate limiting, security headers, CI validation, and dependency security scanning.
 
-## Features
+📌 Project Overview
 
-- Secure Over-the-Air (OTA) firmware updates
-- RSA digital signature verification
-- SHA-256 hash integrity validation
-- Automated firmware signing
-- Edge device verification
-- Firmware encryption
-- JWT-based authentication
-- Firmware version management
-- Secure deployment workflow
-- REST API with Swagger documentation
+Firmware updates are a critical security boundary in IoT environments. An attacker who modifies, replaces, or distributes unauthorized firmware can compromise an entire fleet of devices.
 
-## Technology Stack
+This project provides a controlled firmware lifecycle:
 
-- **Backend:** FastAPI
-- **Frontend:** React
-- **Database:** SQLite, SQLAlchemy ORM
-- **Programming Language:** Python
-- **Cryptography:** RSA, SHA-256, AES (Fernet)
-- **Authentication:** JWT
-- **API Documentation:** Swagger UI
-- **Version Control:** Git & GitHub
-## Folder Structure
+Firmware Upload
+      |
+      v
+SHA-256 Integrity Hash
+      |
+      v
+RSA Digital Signature
+      |
+      v
+Fernet Encryption
+      |
+      v
+Secure Firmware Storage
+      |
+      v
+Authentication & Authorization
+      |
+      v
+Firmware Deployment
+      |
+      v
+Device Update Tracking
+      |
+      v
+Audit & Analytics
 
-```text
-Secure-Firmware-Update-System/
-├── backend/                 # FastAPI backend application
-├── frontend/                # React frontend application
-├── uploads/                 # Uploaded firmware files
-├── docs/                    # Project documentation
-├── README.md                # Project documentation
-└── .gitignore               # Git ignore rules
-```
-## Installation Guide
+✨ Key Features
 
-### Prerequisites
+🔐 Security
 
-- Python 3.10 or later
-- Git
-- Node.js (for frontend)
-- SQLite
+JWT-based authentication
 
-### Installation
+Role-based authorization
 
-1. Clone the repository.
-2. Navigate to the project directory.
-3. Install the required dependencies.
-4. Start the backend server.
-5. Start the frontend application.
-6. Open Swagger UI to test the APIs.
+RSA digital signature verification
 
-## Team Members
+SHA-256 firmware integrity verification
 
-| Name | Role |
-|------|------|
-| Prasad Kedar | Team Lead |
-| Al Ameen Ayoob | Developer |
-| Adarsh | Developer |
-| Nelna K Siyad | Documentation & Testing |
+Fernet symmetric firmware encryption
 
-## Database Design
+Environment-based secret configuration
 
-- SQLite
+Protected cryptographic key files
 
-- SQLAlchemy ORM
+Rate limiting
 
-- Firmware Table
+Security response headers
 
-- Device Table
+Content Security Policy (CSP)
 
-- UpdateHistory Table
+Global exception handling
 
-## Firmware Upload Module
+Audit logging
 
- ###Features
+Input validation
 
-- Upload firmware packages
-- Store firmware files in uploads directory
-- Save firmware metadata to SQLite
-- Validate upload requests
-- Test APIs using Swagger UIgit add README.md
+Dependency vulnerability scanning with pip-audit and Trivy
 
-## Firmware Integrity Verification
+📦 Firmware Management
 
-The backend generates a SHA-256 hash for every uploaded firmware package.
+Firmware upload
 
-### Workflow
+Firmware metadata management
 
-- Upload firmware
-- Generate SHA-256 hash
-- Store hash in SQLite
-- Verify uploaded firmware against stored hash
-- Return Valid or Tampered status
+Firmware version tracking
 
-## RSA Digital Signature
+Firmware history
 
-The Secure Firmware Update System uses RSA Digital Signatures to verify firmware authenticity.
+Latest firmware retrieval
 
-### Workflow
+Duplicate-version validation
 
-1. Upload firmware
-2. Generate SHA-256 hash
-3. Sign firmware using RSA Private Key
-4. Store signature in database
-5. Verify signature using RSA Public Key
+Authorized firmware deletion/access
 
-### Security Benefits
+Firmware encryption and protected storage
 
-- Ensures firmware authenticity
-- Prevents unauthorized firmware modification
-- Detects tampered firmware
-- Provides secure firmware validation
+Authorized firmware decryption
 
-## AES Firmware Encryption
+🚀 Deployment
 
-### Workflow
+Firmware deployment by version
 
-Upload Firmware
+Active firmware management
 
-↓
+Deployment status tracking
 
-Generate SHA-256
+Firmware rollback support
 
-↓
+🖥️ Device Management
 
-Generate RSA Signature
+IoT device registration
 
-↓
+Device listing
 
-Encrypt using AES-256
+Device update and deletion
 
-↓
+Firmware assignment
 
-Store Encrypted Firmware
+Device update-status tracking
 
-↓
+Device history
 
-Decrypt when Required
+📊 Monitoring & Operations
 
-### Benefits
+Analytics APIs
 
-- Prevents firmware theft
-- Protects firmware confidentiality
-- Secure deployment
+Health-check API
 
-## Firmware Encryption
+Audit logging
 
-The Secure Firmware Update System encrypts firmware files before storing them on the server to protect them from unauthorized access.
+Structured application logging
 
-### Features
+Global error handling
 
-* Firmware encryption using Fernet symmetric encryption
-* Secure encryption key management
-* Encrypted firmware storage
-* Firmware decryption API for authorized access
-* SHA-256 hash generation for integrity verification
-* RSA digital signature for authenticity verification
+Swagger/OpenAPI documentation
 
-### Encryption Workflow
+Docker support
 
-1. Upload firmware
-2. Generate SHA-256 hash
-3. Generate RSA digital signature
-4. Encrypt firmware using Fernet
-5. Store encrypted firmware
-6. Save firmware metadata in SQLite
+CI validation
 
-### Decryption Workflow
+🏗️ System Architecture
 
-1. Receive firmware filename
-2. Load encrypted firmware
-3. Decrypt using Fernet key
-4. Save decrypted firmware
-5. Return decrypted file information
+                         +----------------------+
+                         |      React UI        |
+                         |  Dashboard / Client  |
+                         +----------+-----------+
+                                    |
+                                    | HTTP / REST
+                                    v
+                    +-----------------------------+
+                    |        FastAPI API          |
+                    |                             |
+                    | Authentication / JWT        |
+                    | Authorization / RBAC        |
+                    | Rate Limiting               |
+                    | Input Validation            |
+                    | Security Headers / CSP      |
+                    | Exception Handling          |
+                    +--------------+--------------+
+                                   |
+             +---------------------+---------------------+
+             |                     |                     |
+             v                     v                     v
+      +-------------+       +-------------+       +-------------+
+      |  Firmware   |       |   Device    |       | Deployment  |
+      |   Module    |       |   Module    |       |   Module    |
+      +------+------+       +------+------+       +------+------+
+             |                     |                     |
+             +---------------------+---------------------+
+                                   |
+                                   v
+                         +---------------------+
+                         |   Security Layer    |
+                         |                     |
+                         | SHA-256             |
+                         | RSA Signatures      |
+                         | Fernet Encryption   |
+                         | Audit Logging        |
+                         +----------+----------+
+                                    |
+                                    v
+                         +---------------------+
+                         | SQLite + SQLAlchemy |
+                         +---------------------+
 
-### Security Benefits
+🛡️ Security Model
 
-* Prevents unauthorized access to firmware files
-* Protects firmware during storage
-* Supports integrity verification using SHA-256
-* Supports authenticity verification using RSA Digital Signatures
+The platform uses multiple security controls rather than relying on a single mechanism.
 
-## JWT Authentication
-
-### Login
+Authentication
 
 POST /login
 
-### Roles
+A successful login returns a JWT bearer token.
 
-- Admin: upload, download, delete firmware
-- User: download firmware only
+Use the token in Swagger UI:
 
-### Authorization
+Authorization: Bearer <JWT_TOKEN>
 
-Use the JWT token in Swagger Authorize:
+Authorization
 
-Bearer <token>
+Role-based controls distinguish administrative operations from normal user operations.
 
-## Firmware Version Management
+Typical model:
 
-This module provides firmware version tracking and update management features.
+Admin
+ ├── Upload firmware
+ ├── Delete firmware
+ ├── Deploy firmware
+ └── Manage devices
 
-### Features
+User
+ └── Authorized firmware access
 
-- Firmware version tracking
-- Firmware release history
-- Latest firmware retrieval
-- Duplicate firmware version validation
+Actual authorization behavior should always be verified against the implemented API.
 
-### API Endpoints
+🔏 Firmware Integrity Verification
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /firmware/upload | Upload a new firmware |
-| GET | /firmware/history | Retrieve firmware version history |
-| GET | /firmware/latest | Retrieve the latest firmware version |
+The backend generates a SHA-256 hash for firmware content.
 
-### Validation
+Firmware
+   |
+   v
+SHA-256
+   |
+   v
+Hash stored with metadata
+   |
+   v
+Future verification
+   |
+   +--> Match    -> Integrity Valid
+   |
+   +--> Mismatch -> Possible Tampering
 
-- Prevents duplicate firmware versions
-- Rejects empty firmware version
-- Returns appropriate HTTP error responses
+SHA-256 helps detect unauthorized modification of firmware content.
 
-## Firmware Version Management
+✍️ RSA Digital Signatures
 
-### Features
+RSA digital signatures provide firmware authenticity verification.
 
-- Firmware version history
-- Activate latest firmware
-- Rollback to previous firmware
-- Deployment status tracking
-- Release date management
-- Active firmware management
+Firmware
+   |
+   v
+Signing Process
+   |
+   v
+RSA Private Key
+   |
+   v
+Digital Signature
+   |
+   v
+Verification
+   |
+   v
+RSA Public Key
 
-### APIs
+Benefits:
 
-- POST /firmware/upload
-- POST /firmware/rollback
-- GET /firmware/history
+Detects unauthorized firmware modification
 
-### Testing
+Verifies firmware authenticity
 
-Verified using Swagger UI.
+Rejects invalid signatures
 
-## Firmware Deployment
+Separates signing capability from verification capability
 
-### Features
+Important: Private keys must never be committed to Git. The repository ignores cryptographic private-key files.
 
-- Deploy firmware by version
-- Maintain one active firmware at a time
-- Track deployment status
-- Swagger API available
+🔒 Firmware Encryption
 
-### Deployment API
+The project uses Fernet symmetric encryption to protect firmware stored on the server.
 
-**Endpoint**
+Encryption workflow
+
+Firmware
+   |
+   v
+SHA-256 Integrity Hash
+   |
+   v
+RSA Signature
+   |
+   v
+Fernet Encryption
+   |
+   v
+Encrypted Firmware Storage
+
+Decryption workflow
+
+Authorized Request
+       |
+       v
+Encrypted Firmware
+       |
+       v
+Fernet Decryption
+       |
+       v
+Decrypted Firmware
+
+Encryption protects firmware confidentiality while hashing and signatures provide integrity and authenticity controls.
+
+🗄️ Database Design
+
+The backend uses:
+
+SQLite
+
+SQLAlchemy ORM
+
+Core entities include:
+
+Firmware
+
+Device
+
+UpdateHistory
+
+📦 Firmware Lifecycle
+
+Upload
+  |
+  v
+Validate
+  |
+  v
+Hash
+  |
+  v
+Sign
+  |
+  v
+Encrypt
+  |
+  v
+Store Metadata
+  |
+  v
+Deploy
+  |
+  v
+Track Status
+
+🚀 Firmware Deployment
+
+Example:
 
 POST /firmware/deploy
 
-**Example Request**
-
-```json
 {
   "version": "1.0.0"
 }
-```
 
-**Example Response**
+Example response:
 
-```json
 {
   "message": "Firmware deployed successfully",
   "active_version": "1.0.0"
 }
-```
 
-### Deployment Workflow
+Deployment workflow:
 
 Receive Version
-
-↓
-
+      |
+      v
 Find Firmware
-
-↓
-
-Deactivate Current Active Firmware
-
-↓
-
-Activate Selected Firmware
-
-↓
-
+      |
+      v
+Validate Firmware
+      |
+      v
+Deactivate Previous Active Version
+      |
+      v
+Activate Selected Version
+      |
+      v
 Update Deployment Status
+      |
+      v
+Return Result
 
-↓
+🔄 Firmware Version Management
 
-Return Success
-  
-## Device Management
+Capabilities include:
 
-### Features
+Firmware version tracking
 
-- Register IoT devices
-- Assign firmware to devices
-- Track firmware version
-- Monitor device update status
-- Swagger API support
+Firmware release history
 
-### APIs
+Latest firmware retrieval
 
-- POST /devices/register
-- GET /devices
-- POST /devices/assign-firmware
-- POST /devices/update-status
+Duplicate-version validation
 
-### Device Status
-- Pending
-- Updating
-- Updated
-- Failed
+Active firmware management
 
-### Device History
+Rollback support
 
-- View complete history of registered devices.
-- Track assigned firmware versions.
-- Monitor device status.
-- Retrieve registration history.
+Release/deployment tracking
 
-## Device Management APIs
+Example APIs:
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /devices/register | Register a new device |
-| GET | /devices | Get all registered devices |
-| PUT | /devices/update/{id} | Update device details |
-| DELETE | /devices/delete/{id} | Delete device |
-| POST | /devices/assign-firmware | Assign firmware to device |
-| GET | /devices/history | Get complete device history |
+POST /firmware/upload
+GET  /firmware/history
+GET  /firmware/latest
+POST /firmware/rollback
+POST /firmware/deploy
 
-### GET /devices/history
+📡 Device Management
 
-Example Response
+Capabilities:
 
-```json
-[
-  {
-    "id": 1,
-    "device_name": "ESP32",
-    "serial_number": "ESP001",
-    "model": "ESP32-WROOM",
-    "firmware_version": "1.0.0",
-    "assigned_firmware": "1.0.0",
-    "status": "Online",
-    "registered_at": "2026-07-27T10:30:00"
-  }
-]
+Register devices
+
+
+List devices
+
+Update device details
 
 # Secure Firmware Update System
 
-A production-ready Secure Firmware Update System built with FastAPI.
 
-## Features
+Delete devices
 
-- JWT Authentication
-- Firmware Management
-- Device Management
-- Deployment Tracking
-- Analytics Dashboard
-- Audit Logging
-- Health Check API
-- Docker Support
-- Global Exception Handling
+Assign firmware
 
+Track update status
 
-## Installation
+Retrieve device history
 
-```bash
-git clone <repository-url>
+Example APIs:
 
-cd backend
+POST   /devices/register
+GET    /devices
+PUT    /devices/update/{id}
+DELETE /devices/delete/{id}
+POST   /devices/assign-firmware
+POST   /devices/update-status
+GET    /devices/history
 
-python -m venv venv
+Typical device lifecycle:
 
-venv\Scripts\activate
+Registered
+    |
+    v
+Pending
+    |
+    v
+Updating
+    |
+    +--> Updated
+    |
+    +--> Failed
 
-pip install -r requirements.txt
+📊 Analytics & Audit
 
-uvicorn main:app --reload --port 8001
+The project includes analytics and audit capabilities for operational visibility.
 
-## Environment Variables
+Security-relevant events can be recorded through the audit logging layer, including authentication activity and firmware-related operations.
 
-Create a .env file.
+Structured application logging covers:
 
-DATABASE_URL=
+Application startup
 
-SECRET_KEY=
+Database initialization
 
-ALGORITHM=
+API activity
 
-ACCESS_TOKEN_EXPIRE_MINUTES=
+Authentication events
 
-## Docker
+Validation failures
 
-Build
+Exceptions
 
-docker build -t secure-firmware-api .
+Security-related events
 
-Run
-
-docker run -p 8001:8001 secure-firmware-api
-
-## Main APIs
-
-GET /
+❤️ Health Check
 
 GET /health
 
-POST /login
+Use this endpoint to verify that the API is running correctly.
 
-GET /firmware
+🧪 Security & Quality Testing
 
-POST /firmware
+The project includes tests for security-sensitive functionality such as:
 
-DELETE /firmware/{id}
+Authorization
 
-GET /analytics
+Input validation
 
-## Deployment
+Login behavior
 
-Platform
+Rate limiting
 
-Render
+Health endpoint
 
-Docker
+Authentication
 
-Docker Compose
+Firmware security behavior
 
-Python 3.12
+Run:
 
+pytest
 
-## Troubleshooting
+Review the complete test output after security-related changes.
 
-ImportError
+🔍 Dependency Security Scanning
 
-Run
+pip-audit
 
+pip-audit
+
+Trivy
+
+trivy fs --scanners vuln --skip-dirs venv --skip-dirs .git .
+
+If Trivy reports a vulnerable frontend dependency, update it to a fixed version and rerun the scan.
+
+🛡️ Security Headers
+
+The backend applies:
+
+X-Content-Type-Options: nosniff
+
+X-Frame-Options: DENY
+
+Referrer-Policy: strict-origin-when-cross-origin
+
+Content-Security-Policy
+
+Swagger UI requires controlled CSP exceptions for its required external assets and initialization code. The application therefore uses a Swagger-specific CSP policy under /docs while keeping normal API responses more restrictive.
+
+⚙️ Environment Configuration
+
+Sensitive configuration is supplied through environment variables.
+
+Example:
+
+DATABASE_URL=sqlite:///firmware.db
+SECRET_KEY=CHANGE_ME_TO_A_LONG_RANDOM_SECRET
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+A template is provided as:
+
+.env.example
+
+Never commit:
+
+.env
+private_key.pem
+aes.key
+*.bundle
+
+Local databases containing sensitive data should also remain outside version control.
+
+🛠️ Installation
+
+Prerequisites
+
+Python 3.10+
+
+Node.js
+
+npm
+
+Git
+
+SQLite
+
+Optional: Docker
+
+Optional: Trivy
+
+Optional: pip-audit
+
+Backend Setup
+
+From the project root:
+
+cd backend
+python -m venv ..
+env
+..
+env\Scripts ctivate
 pip install -r requirements.txt
 
-Authentication Error
+Set a development secret:
 
-Check JWT Secret
+$env:SECRET_KEY="change-this-local-development-secret"
 
-Docker Error
+Start:
+
+uvicorn main:app --reload --port 8001
+
+📖 API Documentation
+
+Swagger UI:
+
+http://127.0.0.1:8001/docs
+
+OpenAPI:
+
+http://127.0.0.1:8001/openapi.json
+
+Swagger can be used to:
+
+Authenticate
+
+Test endpoints
+
+Upload firmware
+
+Manage devices
+
+Test deployment APIs
+
+Inspect responses
+
+Validate authorization behavior
+
+🌐 Frontend Setup
+
+cd frontend
+npm install
+npm run dev
+
+The React frontend communicates with the FastAPI backend using its configured API base URL.
+
+🐳 Docker
+
+Example:
+
+docker build -t secure-firmware-api .
+docker run -p 8001:8001 secure-firmware-api
+
+If Docker Compose is configured:
 
 docker compose up --build
 
-Database Error
+🔄 CI/CD
 
-Verify DATABASE_URL
+The project includes GitHub Actions-based continuous integration.
 
-backend/
+Push / Pull Request
+        |
+        v
+Python Environment
+        |
+        v
+Dependency Installation
+        |
+        v
+Application Validation
+        |
+        v
+Automated Tests / Build Checks
 
-main.py
+This helps detect integration and build problems before deployment.
 
-routers/
+📁 Project Structure
 
-models/
+Secure-Firmware-Update-System/
+|
++-- backend/
+|   +-- main.py
+|   +-- config.py
+|   +-- requirements.txt
+|   +-- database/
+|   +-- models/
+|   +-- routers/
+|   |   +-- firmware.py
+|   |   +-- device.py
+|   |   +-- deployment.py
+|   |   +-- analytics.py
+|   +-- utils/
+|   |   +-- auth_utils.py
+|   |   +-- audit_logger.py
+|   +-- logging_config.py
+|   +-- Dockerfile
+|
++-- frontend/
++-- docs/
++-- uploads/
++-- .env.example
++-- .gitignore
++-- README.md
++-- requirements.txt
 
-database/
+🔧 Troubleshooting
 
-utils/
+Backend import error
 
-logs/
+pip install -r backend
+equirements.txt
 
-Dockerfile
+Authentication error
 
-docker-compose.yml
+Check:
 
-render.yaml
+SECRET_KEY=
+ALGORITHM=
+ACCESS_TOKEN_EXPIRE_MINUTES=
 
-requirements.txt
+Swagger page is blank
 
-## Continuous Integration (CI)
+First verify:
 
-This project uses GitHub Actions for Continuous Integration.
+Invoke-WebRequest http://127.0.0.1:8001/openapi.json -UseBasicParsing
 
-### Automated Workflow
+Expected:
 
-- Python Environment Setup
-- Dependency Installation
-- Backend Startup Verification
-- Automated Build Validation
+StatusCode : 200
+
+
+Then open:
+
+http://127.0.0.1:8001/docs
+
+If CSP errors appear, verify the security middleware's Swagger-specific CSP configuration.
+
+Database error
+
+Verify:
+
+DATABASE_URL=sqlite:///firmware.db
+
+and confirm that the application can access the configured database.
+
+Dependency vulnerability
+
+Run:
+
+pip-audit
+trivy fs --scanners vuln --skip-dirs venv --skip-dirs .git .
+
+Update vulnerable dependencies to fixed versions and scan again.
+
+🔐 Secure Development Practices
+
+This project follows security-focused practices:
+
+Secrets are externalized through environment variables.
+
+Private cryptographic keys are excluded from version control.
+
+Local databases and temporary security artifacts are ignored.
+
+JWT authentication protects authenticated API operations.
+
+Authorization controls restrict sensitive operations.
+
+Firmware integrity is verified using SHA-256.
+
+Firmware authenticity is supported through RSA signatures.
+
+Firmware confidentiality is supported through Fernet encryption.
+
+Rate limiting protects sensitive endpoints.
+
+Security headers reduce browser-side attack surfaces.
+
+Input validation and global exception handling are implemented.
+
+Dependency vulnerabilities are checked with security scanners.
+
+Automated tests validate security-sensitive behavior.
+
+📋 API Summary
+
+Area
+
+Examples
+
+Authentication
+
+POST /login
+
+Health
+
+GET /health
+
+Firmware
+
+Upload, history, latest, deletion
+
+Deployment
+
+Deploy, rollback, status
+
+Devices
+
+Register, list, update, delete
+
+Device Firmware
+
+Assign firmware, update status
+
+Analytics
+
+Analytics/security metrics
+
+Documentation
+
+/docs, /openapi.json
+
+For the authoritative endpoint list, use:
+
+http://127.0.0.1:8001/openapi.json
+
+👥 Team
+
+Member
+
+Role
+
+Prasad Kedar
+
+Team Lead / Backend / Security
+
+Al Ameen Ayoob
+
+Frontend / Development
+
+Prasad kedar
+
+Development / Testing
+
+Nelna K Siyad
+
+Documentation / Testing
+
+🎯 Project Goals
+
+The project demonstrates how a secure firmware update platform can combine:
+
+Authentication
+      +
+Authorization
+      +
+Integrity
+      +
+Authenticity
+      +
+Confidentiality
+      +
+Secure Deployment
+      +
+Device Management
+      +
+Monitoring
+      +
+Auditability
+
+The goal is to provide a practical security-oriented foundation for managing firmware updates across IoT and edge-device environments.
+
+📌 Project Status
+
+The project contains major components for a secure firmware-management workflow:
+
+Backend API
+
+Frontend application
+
+Authentication
+
+Authorization
+
+Firmware management
+
+Cryptographic verification
+
+Firmware encryption
+
+Device management
+
+Deployment management
+
+Analytics
+
+Audit logging
+
+Security headers
+
+Rate limiting
+
+Automated testing
+
+Dependency security scanning
+
+Docker support
+
+CI validation
+
+Environment-based configuration
+
+Before production deployment, environment-specific secrets, cryptographic key management, infrastructure configuration, monitoring, and deployment controls should be reviewed and hardened for the target environment.
+
+📄 License
+
+
+
+⭐ Security First
+
+Never commit passwords, JWT secrets, private RSA keys, AES/Fernet keys, production .env files, sensitive databases, or temporary security artifacts to Git.
+
+If a secret has ever been exposed in Git history, rotate/revoke it and treat the old secret as compromised.
 
 The workflow runs automatically on every push and pull request to ensure code quality and application stability.
 
