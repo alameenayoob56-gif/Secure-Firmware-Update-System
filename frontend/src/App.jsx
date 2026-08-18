@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { isAuthenticated } from "./services/auth";
 
+import DeploymentPage from "./pages/DeploymentPage";
 import MainLayout from "./layouts/MainLayout";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
@@ -36,6 +37,14 @@ function App() {
             path="firmware-history"
             element={<FirmwareHistoryPage />}
           />
+          <Route
+  path="/deployments"
+  element={
+    <ProtectedRoute>
+      <DeploymentPage />
+    </ProtectedRoute>
+  }
+/>
           <Route
             path="api-integration"
             element={<ApiIntegrationPage />}
