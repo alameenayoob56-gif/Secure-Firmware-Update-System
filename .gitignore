@@ -9,6 +9,10 @@ __pycache__/
 .env.*
 !.env.example
 
+node_modules/
+
+
+
 # Logs
 logs/
 *.log
@@ -17,6 +21,9 @@ logs/
 *.db
 *.sqlite
 *.sqlite3
+
+
+
 
 # Cryptographic private keys
 backend/keys/private_key.pem
