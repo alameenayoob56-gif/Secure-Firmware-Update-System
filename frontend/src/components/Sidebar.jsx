@@ -11,6 +11,7 @@ function Sidebar() {
         <NavLink to="/upload">Upload Firmware</NavLink>
         <NavLink to="/devices">Devices</NavLink>
         <NavLink to="/firmware-history">Firmware History</NavLink>
+        <NavLink to="/deployments">Deployments</NavLink>
         <NavLink to="/api-integration">API Integration</NavLink>
       </nav>
     </aside>

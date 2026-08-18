@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { uploadFirmware } from "../services/firmwareService";
+import {
+  uploadFirmware,
+  verifyFirmware,
+} from "../services/firmwareService";
 import "../styles/uploadFirmware.css";
 
 function UploadFirmwarePage() {
@@ -12,6 +15,8 @@ function UploadFirmwarePage() {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+const [verificationResult, setVerificationResult] = useState(null);
 
   function validateForm() {
     if (!firmwareFile) {
@@ -38,6 +43,44 @@ function UploadFirmwarePage() {
 
     return "";
   }
+
+async function handleVerify() {
+  if (!firmwareFile) {
+    setMessageType("error");
+    setMessage("Please choose a firmware .bin file first.");
+    return;
+  }
+
+  if (!firmwareFile.name.toLowerCase().endsWith(".bin")) {
+    setMessageType("error");
+    setMessage("Only .bin firmware files are allowed.");
+    return;
+  }
+
+  try {
+    setIsVerifying(true);
+    setMessage("");
+    setVerificationResult(null);
+
+    const result = await verifyFirmware(firmwareFile);
+
+    setVerificationResult(result);
+    setMessageType("success");
+    setMessage(result?.message || "Firmware verification completed.");
+  } catch (error) {
+    setVerificationResult(null);
+    setMessageType("error");
+    setMessage(
+      error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.message ||
+        "Firmware verification failed."
+    );
+  } finally {
+    setIsVerifying(false);
+  }
+}
+
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -66,6 +109,7 @@ function UploadFirmwarePage() {
   },
   setProgress
 );
+setVerificationResult(response);
       setMessageType("success");
       setMessage(
         response.message || "Firmware uploaded successfully."
@@ -167,13 +211,33 @@ function UploadFirmwarePage() {
             only on the backend server.
           </div>
 
-          <button
-            type="submit"
-            className="upload-button"
-            disabled={isUploading}
-          >
-            {isUploading ? "Uploading..." : "Upload for Signing"}
-          </button>
+         <div className="upload-actions">
+  <button
+    type="button"
+    className="verify-button"
+    onClick={handleVerify}
+    disabled={isUploading || isVerifying}
+  >
+    {isVerifying ? "Verifying..." : "Verify Firmware"}
+  </button>
+
+  <button
+    type="submit"
+    className="upload-button"
+    disabled={isUploading || isVerifying}
+  >
+    {isUploading ? "Uploading..." : "Upload for Signing"}
+  </button>
+  {verificationResult && (
+  <div className="verification-result">
+    <strong>Verification Result</strong>
+
+    <pre>
+      {JSON.stringify(verificationResult, null, 2)}
+    </pre>
+  </div>
+)}
+</div>
         </form>
       </section>
     </div>
