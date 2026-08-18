@@ -157,3 +157,50 @@
   color: #ff8888;
   background-color: rgba(255, 95, 95, 0.08);
 }
+
+.upload-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.verify-button {
+  padding: 12px 18px;
+  border: 1px solid #334334;
+  border-radius: 6px;
+  color: #dce8d8;
+  background-color: #151d15;
+  cursor: pointer;
+}
+
+.verify-button:hover {
+  border-color: rgb(126, 242, 76);
+  color: rgb(126, 242, 76);
+}
+
+.verify-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.verification-result {
+  padding: 16px;
+  border: 1px solid rgba(126, 242, 76, 0.3);
+  border-radius: 6px;
+  background-color: rgba(126, 242, 76, 0.05);
+}
+
+.verification-result strong {
+  display: block;
+  margin-bottom: 10px;
+  color: rgb(126, 242, 76);
+}
+
+.verification-result pre {
+  margin: 0;
+  overflow-x: auto;
+  color: #b8c6b4;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
