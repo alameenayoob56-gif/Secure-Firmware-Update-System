@@ -107,6 +107,9 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "https://secure-firmware-update-system-krd10tfae-soar-4.vercel.app",
+
+        "https://secure-firmware-update-system-sat1dt1l3-soar-4.vercel.app"
+
     ],
     allow_credentials=True,
     allow_methods=["*"],

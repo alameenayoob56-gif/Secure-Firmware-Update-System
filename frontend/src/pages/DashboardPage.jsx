@@ -75,6 +75,7 @@ function DashboardPage() {
 
       const [
 
+
   devicesData,
   deploymentStatsData,
   firmwareHistoryData,
@@ -110,7 +111,7 @@ setFirmwareDistribution(
 setDeploymentHistory(
   Array.isArray(deploymentHistoryData) ? deploymentHistoryData : []
 );
-=======
+
         devicesData,
         deploymentStatsData,
         firmwareHistoryData,
@@ -175,6 +176,9 @@ setDeploymentHistory(
           failed: 0,
         });
       }
+
+
+
 
     } catch (requestError) {
       console.error("Dashboard loading error:", requestError);
