@@ -26,7 +26,10 @@ function FirmwareHistoryPage() {
       setError("");
 
       const data = await getFirmwareHistory();
-      setFirmwareVersions(data);
+
+setFirmwareVersions(
+  Array.isArray(data) ? data : []
+);
     } catch (requestError) {
       setError(
         requestError.response?.data?.detail ||

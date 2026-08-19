@@ -43,11 +43,28 @@ function DashboardPage() {
   getDeploymentHistory(),
 ]);
 
-setDevices(devicesData);
-setDeploymentStats(deploymentStatsData);
-setFirmwareHistory(firmwareHistoryData);
-setFirmwareDistribution(firmwareDistributionData);
-setDeploymentHistory(deploymentHistoryData);
+setDevices(Array.isArray(devicesData) ? devicesData : []);
+setDeploymentStats(
+  deploymentStatsData && typeof deploymentStatsData === "object"
+    ? deploymentStatsData
+    : {
+        total_deployments: 0,
+        started: 0,
+        completed: 0,
+        failed: 0,
+      }
+);
+setFirmwareHistory(
+  Array.isArray(firmwareHistoryData) ? firmwareHistoryData : []
+);
+setFirmwareDistribution(
+  Array.isArray(firmwareDistributionData)
+    ? firmwareDistributionData
+    : []
+);
+setDeploymentHistory(
+  Array.isArray(deploymentHistoryData) ? deploymentHistoryData : []
+);
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||
