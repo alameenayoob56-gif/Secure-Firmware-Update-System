@@ -7,29 +7,33 @@ def log_audit(
     firmware_name: str = None,
     version: str = None,
     device_name: str = None,
-    performed_by: str = "system",
+    performed_by: str = "system"
 ):
+
     db = SessionLocal()
 
     try:
+
         audit = AuditLog(
             action=action,
             firmware_name=firmware_name,
             version=version,
             device_name=device_name,
-            performed_by=performed_by,
+            performed_by=performed_by
         )
 
         db.add(audit)
+
         db.commit()
 
-        print("========== AUDIT LOG ==========")
-        print("ACTION         :", action)
-        print("FIRMWARE       :", firmware_name)
-        print("VERSION        :", version)
-        print("DEVICE         :", device_name)
-        print("PERFORMED BY   :", performed_by)
-        print("===============================")
+    except Exception as e:
+
+        db.rollback()
+
+        print(
+            f"Audit log error: {str(e)}"
+        )
 
     finally:
+
         db.close()

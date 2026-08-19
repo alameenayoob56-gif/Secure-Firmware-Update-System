@@ -1,71 +1,147 @@
-from cryptography.fernet import Fernet
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from cryptography.fernet import Fernet
 
-KEYS_DIR = os.path.join(BASE_DIR, "keys")
-KEY_FILE = os.path.join(KEYS_DIR, "aes.key")
 
+# ============================================================
+# PATHS
+# ============================================================
+
+BASE_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__)
+    )
+)
+
+KEYS_DIR = os.path.join(
+    BASE_DIR,
+    "keys"
+)
+
+KEY_FILE = os.path.join(
+    KEYS_DIR,
+    "aes.key"
+)
+
+
+# ============================================================
+# GENERATE KEY
+# ============================================================
 
 def generate_key():
-    """
-    Generate a Fernet encryption key and save it.
-    """
-    os.makedirs(KEYS_DIR, exist_ok=True)
+
+    os.makedirs(
+        KEYS_DIR,
+        exist_ok=True
+    )
 
     if not os.path.exists(KEY_FILE):
+
         key = Fernet.generate_key()
 
-        with open(KEY_FILE, "wb") as f:
-            f.write(key)
+        with open(
+            KEY_FILE,
+            "wb"
+        ) as file:
 
-        print("Encryption key generated successfully.")
-    else:
-        print("Encryption key already exists.")
+            file.write(key)
 
+
+# ============================================================
+# LOAD KEY
+# ============================================================
 
 def load_key():
-    """
-    Load the existing encryption key.
-    """
+
     if not os.path.exists(KEY_FILE):
+
         generate_key()
 
-    with open(KEY_FILE, "rb") as f:
-        return f.read()
+    with open(
+        KEY_FILE,
+        "rb"
+    ) as file:
+
+        return file.read()
 
 
-def encrypt_file(input_file, output_file):
-    """
-    Encrypt a firmware file.
-    """
+# ============================================================
+# ENCRYPT FILE
+# ============================================================
+
+def encrypt_file(
+    input_file,
+    output_file
+):
+
     key = load_key()
+
     cipher = Fernet(key)
 
-    with open(input_file, "rb") as f:
-        data = f.read()
+    with open(
+        input_file,
+        "rb"
+    ) as file:
 
-    encrypted_data = cipher.encrypt(data)
+        data = file.read()
 
-    with open(output_file, "wb") as f:
-        f.write(encrypted_data)
+    encrypted_data = cipher.encrypt(
+        data
+    )
+
+    os.makedirs(
+        os.path.dirname(output_file) or ".",
+        exist_ok=True
+    )
+
+    with open(
+        output_file,
+        "wb"
+    ) as file:
+
+        file.write(
+            encrypted_data
+        )
 
     return output_file
 
 
-def decrypt_file(input_file, output_file):
-    """
-    Decrypt an encrypted firmware file.
-    """
+# ============================================================
+# DECRYPT FILE
+# ============================================================
+
+def decrypt_file(
+    input_file,
+    output_file
+):
+
     key = load_key()
+
     cipher = Fernet(key)
 
-    with open(input_file, "rb") as f:
-        encrypted_data = f.read()
+    with open(
+        input_file,
+        "rb"
+    ) as file:
 
-    decrypted_data = cipher.decrypt(encrypted_data)
+        encrypted_data = file.read()
 
-    with open(output_file, "wb") as f:
-        f.write(decrypted_data)
+    decrypted_data = cipher.decrypt(
+        encrypted_data
+    )
+
+    os.makedirs(
+        os.path.dirname(output_file) or ".",
+        exist_ok=True
+    )
+
+    with open(
+        output_file,
+        "wb"
+    ) as file:
+
+        file.write(
+            decrypted_data
+        )
 
     return output_file
