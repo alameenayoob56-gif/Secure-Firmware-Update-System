@@ -74,6 +74,43 @@ function DashboardPage() {
       setError("");
 
       const [
+
+  devicesData,
+  deploymentStatsData,
+  firmwareHistoryData,
+  firmwareDistributionData,
+  deploymentHistoryData,
+] = await Promise.all([
+  getDevices(),
+  getDeploymentStats(),
+  getFirmwareHistory(),
+  getFirmwareDistribution(),
+  getDeploymentHistory(),
+]);
+
+setDevices(Array.isArray(devicesData) ? devicesData : []);
+setDeploymentStats(
+  deploymentStatsData && typeof deploymentStatsData === "object"
+    ? deploymentStatsData
+    : {
+        total_deployments: 0,
+        started: 0,
+        completed: 0,
+        failed: 0,
+      }
+);
+setFirmwareHistory(
+  Array.isArray(firmwareHistoryData) ? firmwareHistoryData : []
+);
+setFirmwareDistribution(
+  Array.isArray(firmwareDistributionData)
+    ? firmwareDistributionData
+    : []
+);
+setDeploymentHistory(
+  Array.isArray(deploymentHistoryData) ? deploymentHistoryData : []
+);
+=======
         devicesData,
         deploymentStatsData,
         firmwareHistoryData,
@@ -138,6 +175,7 @@ function DashboardPage() {
           failed: 0,
         });
       }
+
     } catch (requestError) {
       console.error("Dashboard loading error:", requestError);
 
