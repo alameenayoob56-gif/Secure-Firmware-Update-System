@@ -68,133 +68,95 @@ function DashboardPage() {
     return [];
   }
 
-  async function loadDashboard() {
-    try {
-      setLoading(true);
-      setError("");
+ async function loadDashboard() {
+  try {
+    setLoading(true);
+    setError("");
 
-      const [
+    const [
+      devicesData,
+      deploymentStatsData,
+      firmwareHistoryData,
+      firmwareDistributionData,
+      deploymentHistoryData,
+    ] = await Promise.all([
+      getDevices(),
+      getDeploymentStats(),
+      getFirmwareHistory(),
+      getFirmwareDistribution(),
+      getDeploymentHistory(),
+    ]);
 
-  devicesData,
-  deploymentStatsData,
-  firmwareHistoryData,
-  firmwareDistributionData,
-  deploymentHistoryData,
-] = await Promise.all([
-  getDevices(),
-  getDeploymentStats(),
-  getFirmwareHistory(),
-  getFirmwareDistribution(),
-  getDeploymentHistory(),
-]);
+    console.log("Dashboard API responses:", {
+      devicesData,
+      deploymentStatsData,
+      firmwareHistoryData,
+      firmwareDistributionData,
+      deploymentHistoryData,
+    });
 
-setDevices(Array.isArray(devicesData) ? devicesData : []);
-setDeploymentStats(
-  deploymentStatsData && typeof deploymentStatsData === "object"
-    ? deploymentStatsData
-    : {
+    // Devices
+    setDevices(normalizeArray(devicesData));
+
+    // Firmware history
+    setFirmwareHistory(normalizeArray(firmwareHistoryData));
+
+    // Firmware distribution
+    setFirmwareDistribution(
+      normalizeArray(firmwareDistributionData)
+    );
+
+    // Deployment history
+    setDeploymentHistory(
+      normalizeArray(deploymentHistoryData)
+    );
+
+    // Deployment statistics
+    if (
+      deploymentStatsData &&
+      typeof deploymentStatsData === "object" &&
+      !Array.isArray(deploymentStatsData)
+    ) {
+      setDeploymentStats({
+        total_deployments:
+          Number(deploymentStatsData.total_deployments) || 0,
+
+        started:
+          Number(deploymentStatsData.started) || 0,
+
+        completed:
+          Number(deploymentStatsData.completed) || 0,
+
+        failed:
+          Number(deploymentStatsData.failed) || 0,
+      });
+    } else {
+      setDeploymentStats({
         total_deployments: 0,
         started: 0,
         completed: 0,
         failed: 0,
-      }
-);
-setFirmwareHistory(
-  Array.isArray(firmwareHistoryData) ? firmwareHistoryData : []
-);
-setFirmwareDistribution(
-  Array.isArray(firmwareDistributionData)
-    ? firmwareDistributionData
-    : []
-);
-setDeploymentHistory(
-  Array.isArray(deploymentHistoryData) ? deploymentHistoryData : []
-);
-=======
-        devicesData,
-        deploymentStatsData,
-        firmwareHistoryData,
-        firmwareDistributionData,
-        deploymentHistoryData,
-      ] = await Promise.all([
-        getDevices(),
-        getDeploymentStats(),
-        getFirmwareHistory(),
-        getFirmwareDistribution(),
-        getDeploymentHistory(),
-      ]);
-
-      console.log("Dashboard API responses:", {
-        devicesData,
-        deploymentStatsData,
-        firmwareHistoryData,
-        firmwareDistributionData,
-        deploymentHistoryData,
       });
-
-      // Devices
-      setDevices(normalizeArray(devicesData));
-
-      // Firmware history
-      setFirmwareHistory(normalizeArray(firmwareHistoryData));
-
-      // Firmware distribution
-      setFirmwareDistribution(
-        normalizeArray(firmwareDistributionData)
-      );
-
-      // Deployment history
-      setDeploymentHistory(
-        normalizeArray(deploymentHistoryData)
-      );
-
-      // Deployment statistics
-      if (
-        deploymentStatsData &&
-        typeof deploymentStatsData === "object" &&
-        !Array.isArray(deploymentStatsData)
-      ) {
-        setDeploymentStats({
-          total_deployments:
-            Number(deploymentStatsData.total_deployments) || 0,
-
-          started:
-            Number(deploymentStatsData.started) || 0,
-
-          completed:
-            Number(deploymentStatsData.completed) || 0,
-
-          failed:
-            Number(deploymentStatsData.failed) || 0,
-        });
-      } else {
-        setDeploymentStats({
-          total_deployments: 0,
-          started: 0,
-          completed: 0,
-          failed: 0,
-        });
-      }
-
-    } catch (requestError) {
-      console.error("Dashboard loading error:", requestError);
-
-      setError(
-        requestError.response?.data?.detail ||
-          requestError.response?.data?.message ||
-          requestError.message ||
-          "Unable to load dashboard data. Check the backend connection."
-      );
-
-      // Always keep state as arrays
-      setDevices([]);
-      setFirmwareHistory([]);
-      setFirmwareDistribution([]);
-      setDeploymentHistory([]);
-    } finally {
-      setLoading(false);
     }
+  } catch (requestError) {
+    console.error("Dashboard loading error:", requestError);
+
+    setError(
+      requestError.response?.data?.detail ||
+        requestError.response?.data?.message ||
+        requestError.message ||
+        "Unable to load dashboard data. Check the backend connection."
+    );
+
+    // Always keep state as arrays
+    setDevices([]);
+    setFirmwareHistory([]);
+    setFirmwareDistribution([]);
+    setDeploymentHistory([]);
+  } finally {
+    setLoading(false);
   }
+}
 
   useEffect(() => {
     loadDashboard();
